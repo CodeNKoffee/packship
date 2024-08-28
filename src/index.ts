@@ -5,6 +5,10 @@ import { Command } from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configPath = path.join(__dirname, '..', 'plopfile.js');
 
 const program = new Command();
 const questions: any = [
@@ -69,7 +73,7 @@ program
     // Run Plop to generate additional files
     (Plop as any).launch({
       cwd: process.cwd(),
-      configPath: path.join(new URL('..', import.meta.url).pathname, 'plopfile.js'),
+      configPath: configPath, // Use the configPath variable here
       require: require,
     }, (env: any) => run(env, undefined, true));
   });

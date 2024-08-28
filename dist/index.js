@@ -1,18 +1,12 @@
 #!/usr/bin/env node
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { Plop, run } from 'plop';
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configPath = path.join(__dirname, '..', 'plopfile.js');
 const program = new Command();
 const questions = [
     { type: 'input', name: 'packageName', message: 'Package Name:' },
@@ -25,17 +19,15 @@ program
     .description('CLI to help ship npm packages faster')
     .version('0.1.0');
 // Function to prompt user for package details
-function promptPackageDetails() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const answers = yield inquirer.prompt(questions);
-        return answers; // Return the answers
-    });
+async function promptPackageDetails() {
+    const answers = await inquirer.prompt(questions);
+    return answers; // Return the answers
 }
 program
     .command('init')
     .description('Initialize a new npm package')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
-    const details = yield promptPackageDetails();
+    .action(async () => {
+    const details = await promptPackageDetails();
     console.log('Package Details:', details);
     // Create package directory
     const packageDir = path.resolve(process.cwd(), details.packageName);
@@ -73,10 +65,10 @@ program
     // Run Plop to generate additional files
     Plop.launch({
         cwd: process.cwd(),
-        configPath: path.join(new URL('..', import.meta.url).pathname, 'plopfile.js'),
+        configPath: configPath, // Use the configPath variable here
         require: require,
     }, (env) => run(env, undefined, true));
-}));
+});
 // Additional commands can be added here using program.command().action()
 // Parse the command-line arguments
 program.parse(process.argv);
