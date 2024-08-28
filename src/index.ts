@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Plop, run } from 'plop';
 import { Command } from 'commander';
 import inquirer from 'inquirer';
