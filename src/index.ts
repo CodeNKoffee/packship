@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
-import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
-import path from 'path';
 import { execFile } from 'child_process';
 
-const __filename = fileURLToPath(new URL(import.meta.url));
-const __dirname = dirname(__filename);
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const program = new Command();
 const questions: any = [
