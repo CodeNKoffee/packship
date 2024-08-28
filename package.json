@@ -2,9 +2,11 @@
   "name": "packship",
   "version": "0.1.0",
   "description": "CLI to help ship npm packages faster",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "type": "module",
   "bin": {
-    "packship": "bin/index.js"
+    "packship": "dist/index.js",
+    "packship-generate": "dist/bin/index.js"
   },
   "scripts": {
     "build": "tsc",
