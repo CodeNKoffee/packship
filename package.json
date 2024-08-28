@@ -1,0 +1,46 @@
+{
+  "name": "packship",
+  "version": "0.1.0",
+  "description": "CLI to help ship npm packages faster",
+  "main": "src/index.ts",
+  "bin": {
+    "packship": "bin/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli",
+    "npm",
+    "package",
+    "automation",
+    "deploy",
+    "javascript",
+    "typescript",
+    "node",
+    "ship",
+    "packship"
+  ],
+  "author": "Hatem Soliman",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@types/inquirer": "^9.0.7",
+    "eslint": "^9.9.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.9.0",
+    "plop": "^4.0.1",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.3.0"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "handlebars": "^4.7.8",
+    "inquirer": "^10.1.8"
+  }
+}

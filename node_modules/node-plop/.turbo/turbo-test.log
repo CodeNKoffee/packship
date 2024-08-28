@@ -1,0 +1,57 @@
+
+> node-plop@0.31.1 test:js
+> vitest run
+
+
+ RUN  v0.34.3 /Users/corbincrutchley/git/plop/packages/node-plop
+
+ ✓ tests/imported-custom-action/imported-custom-action.spec.js  (2 tests) 15ms
+ ✓ tests/add-action-no-template/add-action-no-template.spec.js  (1 test) 18ms
+ ✓ tests/action-force-add/action-force-add.spec.js  (2 tests) 29ms
+ ✓ tests/add-action-transform-function/add-action-transform-function.spec.js  (8 tests) 33ms
+ ✓ tests/add-action-skip-function/add-action-skip-function.spec.js  (9 tests) 33ms
+ ✓ tests/basic-plopfile/basic-plopfile.spec.js  (4 tests) 47ms
+ ✓ tests/load-assets-from-plopfile/load-assets-from-plopfile.spec.js  (13 tests) 40ms
+ ✓ tests/append/append.spec.js  (5 tests) 197ms
+ ✓ tests/custom-data-in-actions/custom-data-in-actions.spec.js  (2 tests) 40ms
+ ✓ tests/addMany-non-verbose/addMany-non-verbose.spec.js  (1 test) 43ms
+ ✓ tests/addMany-action-transform-function/addMany-action-transform-function.spec.js  (7 tests) 64ms
+ ✓ tests/modify-action-transform-function/modify-action-transform-function.spec.js  (11 tests) 91ms
+ ✓ tests/addMany-strip-extensions/addMany-strip-extensions.spec.js  (3 tests) 93ms
+ ✓ tests/esm-plopfile/esm-plopfile.spec.js  (6 tests | 3 skipped) 70ms
+ ✓ tests/dynamic-template-file/dynamic-template-file.spec.js  (3 tests) 70ms
+ ✓ tests/addMany-executable-file/addMany-executable-file.spec.js  (1 test) 28ms
+ ✓ tests/addMany-multiple-files/addMany-multiple-files.spec.js  (7 tests) 789ms
+ ✓ tests/add-action-binary-file/add-action-binary-file.spec.js  (1 test) 58ms
+ ✓ tests/load-nested-plopfile-generators/load-nested-plopfile-generators.spec.js  (2 tests) 43ms
+ ✓ tests/load-assets-from-pack/load-assets-from-pack.spec.js  (5 tests) 39ms
+ ✓ tests/addMany-dynamic-template-file/addMany-dynamic-template-file.spec.js  (2 tests) 83ms
+ ✓ tests/dynamic-actions/dynamic-actions.spec.js  (2 tests) 93ms
+ ✓ tests/add-action-failure/add-action-failure.spec.js  (3 tests) 56ms
+ ✓ tests/basic-no-plopfile/basic-no-plopfile.spec.js  (2 tests) 89ms
+ ✓ tests/prompt-bypass-validate/prompt-bypass-validate.spec.js  (4 tests) 16ms
+ ✓ tests/add-action-executable-file/add-action-executable-file.spec.js  (1 test) 61ms
+ ✓ tests/generator-name-and-prompts/generator-name-and-prompts.spec.js  (3 tests) 10ms
+ ✓ tests/prompt-bypass-confirm/prompt-bypass-confirm.spec.js  (2 tests) 12ms
+ ✓ tests/action-data-cleanup/action-data-cleanup.spec.js  (1 test) 43ms
+ ✓ tests/lifecycle-hooks/lifecycle-hooks.spec.js  (4 tests) 32ms
+ ✓ tests/prompt-bypass-checkbox/prompt-bypass-checkbox.spec.js  (2 tests) 42ms
+ ✓ tests/append-empty/append-empty.spec.js  (1 test) 44ms
+ ✓ tests/prompt-bypass-mixed/prompt-bypass-mixed.spec.js  (2 tests) 15ms
+ ✓ tests/dynamic-prompts/dynamic-prompts.spec.js  (3 tests) 18ms
+ ✓ tests/invalid-generator-names/invalid-generator-names.spec.js  (1 test) 6ms
+ ✓ tests/missing-action-path/missing-action-path.spec.js  (1 test) 6ms
+ ✓ tests/get-generator-list/get-generator-list.spec.js  (1 test) 10ms
+ ✓ tests/abort-on-fail/abort-on-fail.spec.js  (2 tests) 4ms
+ ✓ tests/prompt-bypass-list/prompt-bypass-list.spec.js  (2 tests) 10ms
+ ↓ tests/force-del-outside-cwd/force-del-outside-cwd.spec.js  (1 test | 1 skipped)
+
+ Test Files  39 passed | 1 skipped (40)
+      Tests  129 passed | 4 skipped (133)
+   Start at  23:58:57
+   Duration  3.10s (transform 287ms, setup 2ms, collect 14.99s, tests 2.49s, environment 4ms, prepare 3.35s)
+
+
+> node-plop@0.31.1 test:typings
+> dtslint types --localTs ../../node_modules/typescript/lib --expectOnly
+
