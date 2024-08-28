@@ -23,7 +23,6 @@ export function promptPackageDetails() {
                 message: 'Package Description:',
             },
         ];
-        // Use type assertion to assert answers as TemplateData
         const answers = yield inquirer.prompt(questions);
         return answers;
     });

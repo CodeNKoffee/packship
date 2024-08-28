@@ -1,7 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import Handlebars from 'handlebars';
-import { TemplateData } from './prompt';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Define the renderTemplate function to read and compile Handlebars templates
 function renderTemplate(templatePath: string, data: any): string {
@@ -10,7 +13,7 @@ function renderTemplate(templatePath: string, data: any): string {
   return template(data);
 }
 
-export async function createPackage({ name, description }: TemplateData) {
+export async function createPackage({ name, description }: { name: string, description: string }) {
   const packageDir = path.join(process.cwd(), name);
 
   if (fs.existsSync(packageDir)) {

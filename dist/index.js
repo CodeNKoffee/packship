@@ -8,12 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
 import { execFile } from 'child_process';
-import { fileURLToPath } from 'url';
-import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const program = new Command();
@@ -31,7 +31,7 @@ program
 function promptPackageDetails() {
     return __awaiter(this, void 0, void 0, function* () {
         const answers = yield inquirer.prompt(questions);
-        return answers; // Return the answers
+        return answers;
     });
 }
 program
@@ -55,6 +55,7 @@ program
         version: details.version,
         description: details.description,
         main: 'index.js',
+        type: 'module',
         scripts: {
             test: 'echo "Error: no test specified" && exit 1',
         },
@@ -65,7 +66,7 @@ program
     // Write files to package directory
     try {
         fs.writeFileSync(path.join(packageDir, 'package.json'), JSON.stringify(packageJsonContent, null, 2));
-        fs.writeFileSync(path.join(packageDir, 'README.md'), `# ${details.packageName}\n\n${details.description}\n\n## Installation\n\n\`\`\`\nnpm install ${details.packageName}\n\`\`\`\n\n## Usage\n\n\`\`\`jsx\nimport { ${details.packageName} } from '${details.packageName}';\n\n// Your code here\n\`\`\`\n\n## License\n\nThis project is licensed under the ISC License.`);
+        fs.writeFileSync(path.join(packageDir, 'README.md'), `# ${details.packageName}\n\n${details.description}\n\n## Installation\n\n\`\`\`\nnpm install ${details.packageName}\n\`\`\`\n\n## Usage\n\n\`\`\`js\nimport { ${details.packageName} } from '${details.packageName}';\n\n// Your code here\n\`\`\`\n\n## License\n\nThis project is licensed under the ISC License.`);
         fs.writeFileSync(path.join(packageDir, '.gitignore'), `node_modules/\n.dist/\n*.log\n.env\n.vscode/\n.idea/\n.DS_Store\nThumbs.db`);
         console.log('Initialized new npm package in', packageDir);
     }
@@ -87,6 +88,5 @@ program
         console.log('bin/index.js output:', stdout);
     });
 }));
-// Additional commands can be added here using program.command().action()
 // Parse the command-line arguments
 program.parse(process.argv);

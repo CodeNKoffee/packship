@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-module.exports = function (plop) {
+export default function(plop) {
   // Define user prompts
   plop.setGenerator('init', {
     description: 'Initialize a new npm package setup',

@@ -20,8 +20,6 @@ export async function promptPackageDetails(): Promise<TemplateData> {
     },
   ];
 
-  // Use type assertion to assert answers as TemplateData
-  const answers = await inquirer.prompt(questions) as TemplateData;
-
-  return answers;
+  const answers = await inquirer.prompt(questions);
+  return answers as TemplateData;
 }

@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Command } from 'commander';
-import { createPackage } from '../utils/createPackage';
-import { promptPackageDetails } from '../utils/prompt';
+import { createPackage } from '../utils/createPackage.js';
+import { promptPackageDetails } from '../utils/prompt.js';
 const program = new Command();
 program
     .command('init')

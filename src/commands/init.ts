@@ -1,6 +1,6 @@
 import { Command } from 'commander';
-import { createPackage } from '../utils/createPackage';
-import { promptPackageDetails } from '../utils/prompt';
+import { createPackage } from '../utils/createPackage.js';
+import { promptPackageDetails } from '../utils/prompt.js';
 
 const program = new Command();
 
