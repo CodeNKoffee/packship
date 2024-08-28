@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
-import { execFile } from 'child_process';
+import { Plop } from 'plop';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const program = new Command();
@@ -63,19 +63,15 @@ program
         console.error('Error writing files:', error);
         process.exit(1);
     }
-    // Run bin/index.js as a child process
-    const binPath = path.resolve(__dirname, '../bin/index.js');
-    execFile('node', [binPath], (error, stdout, stderr) => {
-        if (error) {
-            console.error('Error running bin/index.js:', error);
-            return;
-        }
-        if (stderr) {
-            console.error('Error output:', stderr);
-            return;
-        }
-        console.log('bin/index.js output:', stdout);
-    });
+    // Run Plop
+    const plopfilePath = path.resolve(__dirname, '../plopfile.js');
+    Plop.prepare({
+        cwd: process.cwd(),
+        configPath: plopfilePath,
+        preload: {},
+    }, (env) => Plop.execute(env, (env) => {
+        console.log('Plop execution completed');
+    }));
 });
 // Parse the command-line arguments
 program.parse(process.argv);
