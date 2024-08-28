@@ -1,5 +1,4 @@
-#!/usr/bin/env node
-
+import { Plop, run } from 'plop';
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
@@ -7,22 +6,9 @@ import path from 'path';
 
 const program = new Command();
 const questions: any = [
-  { 
-    type: 'input', 
-    name: 'packageName', 
-    message: 'Package Name:' 
-  },
-  { 
-    type: 'input', 
-    name: 'version', 
-    message: 'Initial Version:', 
-    default: '1.0.0' 
-  },
-  { 
-    type: 'input', 
-    name: 'description', 
-    message: 'Package Description:' 
-  }
+  { type: 'input', name: 'packageName', message: 'Package Name:' },
+  { type: 'input', name: 'version', message: 'Initial Version:', default: '1.0.0' },
+  { type: 'input', name: 'description', message: 'Package Description:' }
 ];
 
 // Set up the CLI structure
@@ -72,12 +58,18 @@ program
       fs.writeFileSync(path.join(packageDir, 'package.json'), JSON.stringify(packageJsonContent, null, 2));
       fs.writeFileSync(path.join(packageDir, 'README.md'), `# ${details.packageName}\n\n${details.description}\n\n## Installation\n\n\`\`\`\nnpm install ${details.packageName}\n\`\`\`\n\n## Usage\n\n\`\`\`jsx\nimport { ${details.packageName} } from '${details.packageName}';\n\n// Your code here\n\`\`\`\n\n## License\n\nThis project is licensed under the ISC License.`);
       fs.writeFileSync(path.join(packageDir, '.gitignore'), `node_modules/\n.dist/\n*.log\n.env\n.vscode/\n.idea/\n.DS_Store\nThumbs.db`);
-      
       console.log('Initialized new npm package in', packageDir);
     } catch (error) {
       console.error('Error writing files:', error);
       process.exit(1);
     }
+
+    // Run Plop to generate additional files
+    (Plop as any).launch({
+      cwd: process.cwd(),
+      configPath: path.join(__dirname, '../plopfile.js'),
+      require: require,
+    }, (env: any) => run(env, undefined, true));
   });
 
 // Additional commands can be added here using program.command().action()

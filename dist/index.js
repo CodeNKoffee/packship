@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,28 +7,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { Plop, run } from 'plop';
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
 import path from 'path';
 const program = new Command();
 const questions = [
-    {
-        type: 'input',
-        name: 'packageName',
-        message: 'Package Name:'
-    },
-    {
-        type: 'input',
-        name: 'version',
-        message: 'Initial Version:',
-        default: '1.0.0'
-    },
-    {
-        type: 'input',
-        name: 'description',
-        message: 'Package Description:'
-    }
+    { type: 'input', name: 'packageName', message: 'Package Name:' },
+    { type: 'input', name: 'version', message: 'Initial Version:', default: '1.0.0' },
+    { type: 'input', name: 'description', message: 'Package Description:' }
 ];
 // Set up the CLI structure
 program
@@ -82,6 +69,12 @@ program
         console.error('Error writing files:', error);
         process.exit(1);
     }
+    // Run Plop to generate additional files
+    Plop.launch({
+        cwd: process.cwd(),
+        configPath: path.join(__dirname, '../plopfile.js'),
+        require: require,
+    }, (env) => run(env, undefined, true));
 }));
 // Additional commands can be added here using program.command().action()
 // Parse the command-line arguments
