@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-const path = require('path');
-const { Plop, run } = require('plop');
+import path from 'path';
+import { Plop, run } from 'plop';
 
-// Process CLI arguments
 const args = process.argv.slice(2);
 
 Plop.launch({
