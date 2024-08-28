@@ -5,10 +5,7 @@ import { Command } from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const configPath = path.join(__dirname, '..', 'plopfile.js');
+import { execFile } from 'child_process';
 
 const program = new Command();
 const questions: any = [
@@ -70,12 +67,19 @@ program
       process.exit(1);
     }
 
-    // Run Plop to generate additional files
-    (Plop as any).launch({
-      cwd: process.cwd(),
-      configPath: configPath, // Use the configPath variable here
-      require: require,
-    }, (env: any) => run(env, undefined, true));
+    // Run bin/index.js as a child process
+    const binPath = path.resolve(__dirname, '../bin/index.js');
+    execFile('node', [binPath], (error, stdout, stderr) => {
+      if (error) {
+        console.error('Error running bin/index.js:', error);
+        return;
+      }
+      if (stderr) {
+        console.error('Error output:', stderr);
+        return;
+      }
+      console.log('bin/index.js output:', stdout);
+    });
   });
 
 // Additional commands can be added here using program.command().action()
