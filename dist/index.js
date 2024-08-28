@@ -73,7 +73,7 @@ program
     // Run Plop to generate additional files
     Plop.launch({
         cwd: process.cwd(),
-        configPath: path.join(__dirname, '../plopfile.js'),
+        configPath: path.join(new URL('..', import.meta.url).pathname, 'plopfile.js'),
         require: require,
     }, (env) => run(env, undefined, true));
 }));
