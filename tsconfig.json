@@ -13,5 +13,5 @@
     "skipLibCheck": true
   },
   "type": "module",
-  "exclude": ["node_modules/fined", "node_modules/through"]
+  // "exclude": ["node_modules/fined", "node_modules/through"]
 }
