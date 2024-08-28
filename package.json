@@ -1,6 +1,6 @@
 {
   "name": "packship",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "CLI to help ship npm packages faster",
   "main": "dist/index.js",
   "type": "module",
