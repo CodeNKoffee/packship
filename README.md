@@ -30,11 +30,7 @@ To initialize a new npm package, navigate to your desired directory and run:
 npx -y packship init
 ```
 
-You will be prompted to enter details such as the package name, version, and description. After providing these details, packship will create a new directory with the specified package name and generate the following files:
-
-- `package.json`
-- `README.md`
-- `.gitignore`
+You will be prompted to enter details such as the package name, version, and description. After providing these details, packship will create a new directory with the specified package name and generate the following files of your choice
 
 ### Example
 
