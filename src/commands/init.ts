@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import { createPackage } from '../utils/createPackage.js';
 import { promptPackageDetails } from '../utils/prompt.js';
 import path from 'path';
-import { Plop } from 'plop';  // Correctly import Plop
+import { Plop, run } from 'plop';
 
 const program = new Command();
 
@@ -10,29 +10,34 @@ program
   .command('init')
   .description('Initialize a new npm package')
   .action(async () => {
-    await runPlop();
-
     const details = await promptPackageDetails();
     await createPackage(details);
     console.log(`Initialized new npm package: ${details.name}`);
+    
+    await runPlop(details);
   });
 
-async function runPlop() {
-  const plopfilePath = path.join(__dirname, '../plopfile.js');
+async function runPlop(details: { name: string; description: string }) {
+  const plopfilePath = path.join(__dirname, '../../plopfile.js');
   
-  // Prepare Plop
-  Plop.prepare(
-    {
-      cwd: process.cwd(),
-      configPath: plopfilePath,
-      preload: {} as any,
-    },
-    (env) => {
-      Plop.execute(env, (env) => {
-        console.log('Plop execution completed from init');
-      });
-    }
-  );
+  Plop.prepare({
+    cwd: process.cwd(),
+    configPath: plopfilePath,
+    preload: {} as any,
+  }, (env) => {
+    Plop.execute(env, (env) => {
+      run(env, {
+        generator: 'init',
+        data: details
+      } as any, true)
+        .then(() => {
+          console.log('Plop execution completed from init');
+        })
+        .catch((error) => {
+          console.error('Plop execution error:', error);
+        });
+    });
+  });
 }
 
 export default program;
