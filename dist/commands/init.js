@@ -22,7 +22,7 @@ async function runPlop() {
         preload: {},
     }, (env) => {
         Plop.execute(env, (env) => {
-            console.log('Plop execution completed');
+            console.log('Plop execution completed from init');
         });
     });
 }
