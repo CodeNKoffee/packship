@@ -5,6 +5,8 @@ import { Command } from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
 import { Plop } from 'plop';
+import initCommand from './commands/init.js';
+import versionCommand from './commands/version.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const program = new Command();
@@ -73,5 +75,8 @@ program
         console.log('Plop execution completed');
     }));
 });
+// Register all commands
+program.addCommand(initCommand);
+program.addCommand(versionCommand);
 // Parse the command-line arguments
 program.parse(process.argv);
