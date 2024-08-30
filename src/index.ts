@@ -1,11 +1,8 @@
 #!/usr/bin/env node
 
-import path, { dirname } from 'path';
+import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { Command } from 'commander';
-import inquirer from 'inquirer';
-import fs from 'fs';
-import { Plop } from 'plop';
 import initCommand from './commands/init.js';
 import versionCommand from './commands/version.js';
 
@@ -13,6 +10,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const program = new Command();
+
+// Questions for CLI
 const questions: any = [
   { type: 'input', name: 'packageName', message: 'Package Name:' },
   { type: 'input', name: 'version', message: 'Initial Version:', default: '1.0.0' },
@@ -23,68 +22,9 @@ const questions: any = [
 program
   .name('packship')
   .description('CLI to help ship npm packages faster')
-  .version('0.1.0');
+  .version('0.1.27');
 
-// Function to prompt user for package details
-async function promptPackageDetails() {
-  const answers = await inquirer.prompt(questions);
-  return answers;
-}
-
-program
-  .command('init')
-  .description('Initialize a new npm package')
-  .action(async () => {
-    const details = await promptPackageDetails();
-    console.log('Package Details:', details);
-
-    // Create package directory
-    const packageDir = path.resolve(process.cwd(), details.packageName);
-    if (!fs.existsSync(packageDir)) {
-      fs.mkdirSync(packageDir);
-    } else {
-      console.error('Directory already exists!');
-      process.exit(1);
-    }
-
-    // Define package.json content
-    const packageJsonContent = {
-      name: details.packageName,
-      version: details.version,
-      description: details.description,
-      main: 'index.js',
-      type: 'module',
-      scripts: {
-        test: 'echo "Error: no test specified" && exit 1',
-      },
-      keywords: [],
-      author: '',
-      license: 'ISC',
-    };
-
-    // Write files to package directory
-    try {
-      fs.writeFileSync(path.join(packageDir, 'package.json'), JSON.stringify(packageJsonContent, null, 2));
-      fs.writeFileSync(path.join(packageDir, 'README.md'), `# ${details.packageName}\n\n${details.description}\n\n## Installation\n\n\`\`\`\nnpm install ${details.packageName}\n\`\`\`\n\n## Usage\n\n\`\`\`js\nimport { ${details.packageName} } from '${details.packageName}';\n\n// Your code here\n\`\`\`\n\n## License\n\nThis project is licensed under the ISC License.`);
-      fs.writeFileSync(path.join(packageDir, '.gitignore'), `node_modules/\n.dist/\n*.log\n.env\n.vscode/\n.idea/\n.DS_Store\nThumbs.db`);
-      console.log('Initialized new npm package in', packageDir);
-    } catch (error) {
-      console.error('Error writing files:', error);
-      process.exit(1);
-    }
-
-    // Run Plop
-    const plopfilePath = path.resolve(__dirname, '../plopfile.js');
-    Plop.prepare({
-      cwd: process.cwd(),
-      configPath: plopfilePath,
-      preload: {} as any,
-    }, (env) => Plop.execute(env, (env) => {
-      console.log('Plop execution completed');
-    }));
-  });
-  
-// Register all commands
+// Register commands correctly with names
 program.addCommand(initCommand);
 program.addCommand(versionCommand);
 

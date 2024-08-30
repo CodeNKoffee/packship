@@ -4,10 +4,9 @@ import { promptPackageDetails } from '../utils/prompt.js';
 import path from 'path';
 import { Plop, run } from 'plop';
 
-const program = new Command();
+const initCommand = new Command("init");
 
-program
-  .command('init')
+initCommand
   .description('Initialize a new npm package')
   .action(async () => {
     const details = await promptPackageDetails();
@@ -40,4 +39,4 @@ async function runPlop(details: { name: string; description: string }) {
   });
 }
 
-export default program;
+export default initCommand;

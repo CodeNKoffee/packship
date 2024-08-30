@@ -10,13 +10,12 @@ const __dirname = dirname(__filename);
 const packageJsonPath = join(__dirname, '../../package.json');
 const { version } = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
 
-const program = new Command();
+const versionCommand = new Command("version");
 
-program
-  .command('version')
+versionCommand
   .description('Display the current version of packship')
   .action(() => {
     console.log(`packship v${version}`);
   });
 
-export default program;
+export default versionCommand;

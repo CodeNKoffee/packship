@@ -3,9 +3,8 @@ import { createPackage } from '../utils/createPackage.js';
 import { promptPackageDetails } from '../utils/prompt.js';
 import path from 'path';
 import { Plop, run } from 'plop';
-const program = new Command();
-program
-    .command('init')
+const initCommand = new Command("init");
+initCommand
     .description('Initialize a new npm package')
     .action(async () => {
     const details = await promptPackageDetails();
@@ -34,4 +33,4 @@ async function runPlop(details) {
         });
     });
 }
-export default program;
+export default initCommand;
