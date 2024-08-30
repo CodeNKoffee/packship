@@ -1,7 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import { camelCase } from 'change-case';
 
 export default function(plop) {
+  // Register camelCase helper
+  plop.setHelper('camelCase', (text) => camelCase(text));
   // Define user prompts
   plop.setGenerator('init', {
     description: 'Initialize a new npm package setup',
