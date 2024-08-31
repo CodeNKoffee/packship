@@ -8,7 +8,8 @@ const __dirname = path.dirname(__filename);
 function renderTemplate(templatePath, data) {
     const templateContent = fs.readFileSync(path.join(__dirname, '../../plop-templates', templatePath), 'utf-8');
     const template = Handlebars.compile(templateContent);
-    return template(data);
+    const renderedTemplate = template(data);
+    return renderedTemplate;
 }
 export async function createPackage({ name, description }) {
     const packageDir = path.join(process.cwd(), name);

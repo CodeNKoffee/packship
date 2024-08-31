@@ -7,10 +7,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Define the renderTemplate function to read and compile Handlebars templates
-function renderTemplate(templatePath: string, data: any): string {
+function renderTemplate(templatePath: string, data: {name?: string; description?: string}): string {
   const templateContent = fs.readFileSync(path.join(__dirname, '../../plop-templates', templatePath), 'utf-8');
   const template = Handlebars.compile(templateContent);
-  return template(data);
+  const renderedTemplate = template(data);
+  return renderedTemplate;
 }
 
 export async function createPackage({ name, description }: { name: string, description: string }) {

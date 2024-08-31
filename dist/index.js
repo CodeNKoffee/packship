@@ -17,7 +17,7 @@ const questions = [
 program
     .name('packship')
     .description('CLI to help ship npm packages faster')
-    .version('0.1.27');
+    .version('0.1.30');
 // Register commands correctly with names
 program.addCommand(initCommand);
 program.addCommand(versionCommand);
