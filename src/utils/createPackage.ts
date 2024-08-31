@@ -29,7 +29,7 @@ export async function createPackage({ name, description }: { name: string, descr
     { name: 'README.md', template: 'README.md.hbs', data: { name, description } },
     { name: '.gitignore', template: '.gitignore.hbs', data: {} },
     { name: '.npmignore', template: '.npmignore.hbs', data: {} },
-    { name: 'babel.config.js', template: 'babel.config.hbs', data: {} },
+    { name: 'babel.config.json', template: 'babel.config.hbs', data: {} },
     { name: 'CODE_OF_CONDUCT.md', template: 'CODE_OF_CONDUCT.md.hbs', data: { name } },
     { name: '.eslintrc.json', template: 'eslintrc.json.hbs', data: {} },
     { name: 'index.js', template: 'index.js.hbs', data: {} },
