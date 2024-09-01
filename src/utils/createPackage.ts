@@ -1,9 +1,17 @@
 import fs from 'fs';
 import path from 'path';
-import renderTemplate from './fileUtils';
+import Handlebars from 'handlebars';
+import renderTemplate from './fileUtils.js';
 import { text, select, confirm } from '@clack/prompts';
+import { PackageData } from '../types/index.js';
+
+// Register the missing Handlebars helper
+Handlebars.registerHelper('JSONstringify', function (context) {
+  return JSON.stringify(context, null, 2);
+});
 
 export async function createPackage() {
+  // Get basic information about the package
   const name = await text({
     message: 'What is the name of your package?',
     validate: (value) => (value ? undefined : 'Package name is required.')
@@ -13,6 +21,7 @@ export async function createPackage() {
     message: 'Provide a description for your package:'
   });
 
+  // Choose the language
   const languageChoice = await select({
     message: 'Which language do you want to use for your project?',
     options: [
@@ -22,22 +31,31 @@ export async function createPackage() {
     initialValue: 'TypeScript'
   });
 
+  // Filter project types based on the selected language
+  const projectOptions = languageChoice === "TypeScript"
+    ? [
+      { value: 'react-ts', label: 'React (with TypeScript)' },
+      { value: 'node-ts', label: 'Node.js (with TypeScript)' }
+    ]
+    : [
+      { value: 'react-js', label: 'React (with JavaScript)' },
+      { value: 'node-js', label: 'Node.js (with JavaScript)' },
+      { value: 'vanilla-js', label: 'Vanilla JavaScript' }
+    ];
+
   const projectType = await select({
     message: 'What type of project are you creating?',
-    options: [
-      { value: 'react-js', label: 'React (with JavaScript)' },
-      { value: 'react-ts', label: 'React (with TypeScript)' },
-      { value: 'vanilla-js', label: 'Vanilla JavaScript' },
-      { value: 'node-js', label: 'Node.js' }
-    ],
-    initialValue: 'react-ts'
+    options: projectOptions,
+    initialValue: projectOptions[0].value
   });
 
+  // Include internal directory if needed
   const includeInternalDir = await confirm({
     message: 'Will your project have internal-use components that need an `internal` directory?',
     initialValue: true
   });
 
+  // Additional choices for tooling and configuration
   const useWebpack = await confirm({
     message: 'Do you need to bundle your code using Webpack?',
     initialValue: true
@@ -86,38 +104,159 @@ export async function createPackage() {
     initialValue: true
   });
 
+  // Define base package.json data
+  let packageData: PackageData = {
+    name: String(name),
+    version: '0.1.0',
+    description: String(description),
+    main: languageChoice === 'JavaScript' ? 'index.js' : 'dist/index.js',
+    scripts: {
+      test: 'echo "Error: no test specified" && exit 1'
+    },
+    keywords: [],
+    author: '',
+    license: String(licenseType) || 'ISC',
+  };
+
+  // Dynamically adjust package.json fields based on user choices
+  if (typeof projectType === 'string' && projectType.startsWith('react-')) {
+    packageData = {
+      ...packageData,
+      peerDependencies: {
+        react: '^18.2.0',
+        'react-dom': '^18.2.0'
+      },
+      devDependencies: {
+        '@babel/cli': '^7.10.5',
+        '@babel/core': '^7.23.9',
+        '@babel/preset-env': '^7.23.9',
+        '@babel/preset-react': '^7.23.3'
+      },
+      scripts: {
+        ...packageData.scripts,
+        'build-babel': 'babel src --out-dir dist --presets=@babel/preset-react,@babel/preset-env',
+        build: 'npm run build-babel'
+      }
+    };
+
+    if (languageChoice === 'TypeScript') {
+      packageData.devDependencies = {
+        ...packageData.devDependencies,
+        '@babel/preset-typescript': '^7.24.7',
+        '@types/react': '^18.3.3',
+        '@types/react-dom': '^18.3.0',
+        typescript: '^4.9.5'
+      };
+      packageData.scripts.build = 'tsc && npm run build-babel';
+    }
+  }
+
+  if (useWebpack) {
+    packageData.devDependencies = {
+      ...packageData.devDependencies,
+      webpack: '^5.0.0',
+      'webpack-cli': '^5.1.4',
+    };
+    packageData.scripts['build-webpack'] = 'webpack --config webpack.config.js';
+    packageData.scripts.build += ' && npm run build-webpack';
+  }
+
+  if (useEslint) {
+    packageData.devDependencies = {
+      ...packageData.devDependencies,
+      eslint: '^7.32.0',
+      'eslint-plugin-react': '^7.24.0'
+    };
+    if (languageChoice === 'TypeScript') {
+      packageData.devDependencies = {
+        ...packageData.devDependencies,
+        '@typescript-eslint/eslint-plugin': '^5.0.0',
+        '@typescript-eslint/parser': '^5.0.0'
+      };
+    }
+    packageData.scripts.lint = 'eslint .';
+  }
+
+  // Adjust dependencies based on other choices like PostCSS, etc.
+  if (usePostcss) {
+    packageData.devDependencies = {
+      ...packageData.devDependencies,
+      autoprefixer: '^10.3.1',
+      postcss: '^8.4.5'
+    };
+  }
+
+  // Set up the package directory
   const packageDir = path.join(process.cwd(), String(name));
 
   if (fs.existsSync(packageDir)) {
     throw new Error(`Directory ${String(name)} already exists.`);
   }
 
-  // Create the new package directory
+  // Create the package directory
   await fs.promises.mkdir(packageDir, { recursive: true });
 
-  // List of files to generate based on user choices
+  // Define files to generate based on user choices
   const files = [
     { name: 'package.json', template: 'package.json.hbs', data: { name, description } },
-    ...(includeReadme ? [{ name: 'README.md', template: 'README.md.hbs', data: { name, description } }] : []),
+    ...(includeReadme ? [{ name: 'README.md', template: 'README.md.hbs', data: { name, description, licenseType } }] : []),
     { name: '.gitignore', template: '.gitignore.hbs', data: {} },
     ...(useNpmignore ? [{ name: '.npmignore', template: '.npmignore.hbs', data: {} }] : []),
-    { name: 'index.js', template: 'index.js.hbs', data: {} },
-    { name: 'index.ts', template: 'index.ts.hbs', data: {} },
+    ...(languageChoice === 'JavaScript'
+      ? [{ name: 'src/index.js', template: 'index.js.hbs', data: {} }]
+      : [
+          { name: 'src/index.ts', template: 'index.ts.hbs', data: {} },
+          { name: 'types/index.ts', template: 'index.ts.hbs', data: {} },
+          { name: 'src/declaration.d.ts', template: 'declaration.d.ts.hbs', data: {} }
+        ]),
+    ...(includeInternalDir ?
+          languageChoice === 'TypeScript' 
+          ? [{ name: 'src/internal/index.ts', template: 'index.ts.hbs', data: {} }] 
+          : [{ name: 'src/internal/index.js', template: 'index.js.hbs', data: {} }] 
+        : []),
+    ...(usePostcss ? [
+      { name: 'postcss.config.js', template: 'postcss.config.hbs', data: {} },
+      { name: 'styles/style.css', template: 'style.css.hbs', data: {} }
+    ] : []),
     ...(includeLicense ? [{ name: 'LICENSE.md', template: 'LICENSE.md.hbs', data: { name, licenseType } }] : []),
     ...(includeCodeOfConduct ? [{ name: 'CODE_OF_CONDUCT.md', template: 'CODE_OF_CONDUCT.md.hbs', data: { name } }] : []),
     ...(useEslint ? [{ name: '.eslintrc.json', template: 'eslintrc.json.hbs', data: {} }] : []),
-    ...(usePostcss ? [{ name: 'postcss.config.js', template: 'postcss.config.hbs', data: {} }] : []),
-    ...(useWebpack ? [{ name: 'webpack.config.js', template: 'webpack.config.hbs', data: {} }] : [])
+    ...(useWebpack ? [{ name: 'webpack.config.js', template: 'webpack.config.hbs', data: {} }] : []),
+    ...(typeof projectType === 'string' && projectType.startsWith('react-')
+      ? [{ name: 'babel.config.json', template: 'babel.config.hbs', data: {} }]
+      : []
+    )
   ];
+
+  // Ensure the packageData object conforms to the expected types for rendering
+  const templateData = {
+    name: String(packageData.name),
+    version: packageData.version,
+    description: String(packageData.description),
+    main: packageData.main,
+    scripts: packageData.scripts,
+    keywords: packageData.keywords,
+    author: packageData.author,
+    license: packageData.license,
+    peerDependencies: packageData.peerDependencies,
+    devDependencies: packageData.devDependencies,
+    dependencies: packageData.dependencies, // Ensure this is correctly populated or handled if undefined
+    files: packageData.files // Ensure this is correctly populated or handled if undefined
+  };
 
   // Generate each file using its corresponding template
   await Promise.all(
     files.map(async ({ name, template, data }) => {
       const filePath = path.join(packageDir, name);
-      const content = renderTemplate(template, {
+      // Ensure name and description are strings
+      const preparedData = {
+        ...templateData,
+        ...data,
         name: typeof data.name === 'symbol' ? String(data.name) : data.name,
         description: typeof data.description === 'symbol' ? String(data.description) : data.description,
-      });
+      };
+      const content = renderTemplate(template, preparedData);
+      await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
       await fs.promises.writeFile(filePath, content);
     })
   );
