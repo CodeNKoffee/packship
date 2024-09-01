@@ -6,9 +6,10 @@ import Handlebars from 'handlebars';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export function renderTemplate(templateName: string, data: any): string {
-  const templatePath = path.join(__dirname, '../plop-templates', templateName);
-  const templateContent = fs.readFileSync(templatePath, 'utf-8');
+// Define the renderTemplate function to read and compile Handlebars templates
+export default function renderTemplate(templatePath: string, data: { name?: string; description?: string }): string {
+  const templateContent = fs.readFileSync(path.join(__dirname, '../../templates', templatePath), 'utf-8');
   const template = Handlebars.compile(templateContent);
-  return template(data);
+  const renderedTemplate = template(data);
+  return renderedTemplate;
 }

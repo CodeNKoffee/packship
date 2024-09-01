@@ -1,42 +1,13 @@
 import { Command } from 'commander';
 import { createPackage } from '../utils/createPackage.js';
-import { promptPackageDetails } from '../utils/prompt.js';
-import path from 'path';
-import { Plop, run } from 'plop';
 
 const initCommand = new Command("init");
 
 initCommand
   .description('Initialize a new npm package')
   .action(async () => {
-    const details = await promptPackageDetails();
-    await createPackage(details);
-    console.log(`Initialized new npm package: ${details.name}`);
-    
-    await runPlop(details);
+    const packageName = await createPackage();
+    console.log(`Initialized your new npm package: ${String(packageName)}\nHappy packshipping 📦🛻💨`);
   });
-
-async function runPlop(details: { name: string; description: string }) {
-  const plopfilePath = path.join(__dirname, '../../plopfile.js');
-  
-  Plop.prepare({
-    cwd: process.cwd(),
-    configPath: plopfilePath,
-    preload: {} as any,
-  }, (env) => {
-    Plop.execute(env, (env) => {
-      run(env, {
-        generator: 'init',
-        data: details
-      } as any, true)
-        .then(() => {
-          console.log('Plop execution completed from init');
-        })
-        .catch((error) => {
-          console.error('Plop execution error:', error);
-        });
-    });
-  });
-}
 
 export default initCommand;

@@ -1,28 +1,17 @@
 #!/usr/bin/env node
 
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
 import { Command } from 'commander';
-import initCommand from './commands/init.js';
-import versionCommand from './commands/version.js';
+import initCommand from "./commands/init";
+import versionCommand, { getVersion } from './commands/version';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const program = new Command();
-
-// Questions for CLI
-const questions: any = [
-  { type: 'input', name: 'packageName', message: 'Package Name:' },
-  { type: 'input', name: 'version', message: 'Initial Version:', default: '1.0.0' },
-  { type: 'input', name: 'description', message: 'Package Description:' }
-];
 
 // Set up the CLI structure
 program
   .name('packship')
   .description('CLI to help ship npm packages faster')
-  .version('0.1.30');
+  .version(getVersion());
 
 // Register commands correctly with names
 program.addCommand(initCommand);

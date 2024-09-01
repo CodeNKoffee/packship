@@ -1,7 +1,0 @@
-{
-  "name": "plop-example-prompts-only",
-  "type": "module",
-  "engines": {
-    "node": ">=18"
-  }
-}

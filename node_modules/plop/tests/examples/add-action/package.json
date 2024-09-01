@@ -1,7 +1,0 @@
-{
-  "name": "plop-example-add-action",
-  "type": "module",
-  "engines": {
-    "node": ">=18"
-  }
-}
