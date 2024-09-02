@@ -3,6 +3,7 @@ export interface PackageData {
   version: string;
   description: string;
   main: string;
+  module: string;
   scripts: { [key: string]: string };
   keywords: string[];
   author: string;
