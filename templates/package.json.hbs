@@ -5,18 +5,18 @@
   "main": "{{main}}",
   {{#if scripts}}
   "scripts": {{JSONstringify scripts}},
-  {{/if}}
-  "keywords": {{JSONstringify keywords}},
-  "author": "{{author}}",
-  "license": "{{license}}",
-  {{#if peerDependencies}}
-  "peerDependencies": {{JSONstringify peerDependencies}},
-  {{/if}}
-  {{#if devDependencies}}
-  "devDependencies": {{JSONstringify devDependencies}},
-  {{/if}}
-  {{#if dependencies}}
-  "dependencies": {{JSONstringify dependencies}},
+    {{/if}}
+    "keywords": {{JSONstringify keywords}},
+    "author": "{{author}}",
+    "license": "{{license}}",
+    {{#if peerDependencies}}
+    "peerDependencies": {{JSONstringify peerDependencies}},
+    {{/if}}
+    {{#if devDependencies}}
+    "devDependencies": {{JSONstringify devDependencies}},
+    {{/if}}
+    {{#if dependencies}}
+    "dependencies": {{JSONstringify dependencies}},
   {{/if}}
   "files": [
     "dist"

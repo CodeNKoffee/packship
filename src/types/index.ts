@@ -9,6 +9,14 @@ export interface PackageData {
   license: string;
   peerDependencies?: { [key: string]: string };
   devDependencies?: { [key: string]: string };
-  dependencies?: { [key: string]: string }; // Added optional dependencies property
-  files?: string[]; // Added optional files property
+  dependencies?: { [key: string]: string };
+  files?: string[];
+  repository?: {
+    type: string;
+    url: string;
+  };
+  bugs?: {
+    url: string;
+  };
+  homepage?: string;
 }

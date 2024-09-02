@@ -5,6 +5,6 @@ initCommand
     .description('Initialize a new npm package')
     .action(async () => {
     const packageName = await createPackage();
-    console.log(`Initialized your new npm package: ${String(packageName)}\n\nHappy packshipping 📦🛻💨`);
+    console.log(`Initialized your new npm package: ${packageName}\n\nHappy packshipping! 📦🛻💨\n`);
 });
 export default initCommand;
