@@ -1,11 +1,8 @@
 import Handlebars from 'handlebars';
 
+// Register custom helper for JSON stringification
 export function registerHandlebarsHelpers() {
-  Handlebars.registerHelper('if_eq', function(this: any, a: any, b: any, options: any) {
-    return a === b ? options.fn(this) : options.inverse(this);
-  });
-
-  Handlebars.registerHelper('toLowerCase', function(str: string) {
-    return str.toLowerCase();
+  Handlebars.registerHelper('JSONstringify', function (context) {
+    return JSON.stringify(context, null, 2); // Ensuring proper formatting
   });
 }

@@ -20,3 +20,9 @@ export interface PackageData {
   };
   homepage?: string;
 }
+
+export type FileConfig = {
+  name: string;
+  template: string;
+  data?: { name: string | symbol; description: string | symbol; licenseType?: string | symbol };
+};
