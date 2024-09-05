@@ -91,6 +91,7 @@ export async function createPackage() {
         version: '0.1.0',
         description: String(description),
         main: languageChoice === 'JavaScript' ? 'index.js' : 'dist/index.js',
+        module: languageChoice === 'JavaScript' ? 'index.mjs' : 'dist/index.mjs',
         scripts: {
             test: 'echo "Error: no test specified" && exit 1'
         },
@@ -115,7 +116,7 @@ export async function createPackage() {
             scripts: {
                 ...packageData.scripts,
                 'build-babel': 'babel src --out-dir dist --presets=@babel/preset-react,@babel/preset-env',
-                build: 'npm run build-babel'
+                build: languageChoice === 'JavaScript' ? 'npm run build-babel' : 'tsc && npm run build-babel'
             }
         };
         if (languageChoice === 'TypeScript') {

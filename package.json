@@ -49,6 +49,7 @@
     "@clack/prompts": "^0.7.0",
     "change-case": "^5.4.4",
     "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
     "firebase": "^10.13.1",
     "handlebars": "^4.7.8",
     "inquirer": "^10.1.8",
