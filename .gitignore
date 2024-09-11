@@ -1,1 +1,6 @@
+# Ignore local files
 .env
+.env.*
+
+# Ignore firebaseConfig.ts
+src/firebase/firebaseConfig.ts
