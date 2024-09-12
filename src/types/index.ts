@@ -28,3 +28,8 @@ export type FileConfig = {
   template: string;
   data?: { name: string | symbol; description: string | symbol; licenseType?: string | symbol };
 };
+
+export interface packageSignature {
+  serialNumber: string;
+  packageName: string;
+}
