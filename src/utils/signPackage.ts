@@ -7,16 +7,19 @@ export function signPackage({ serialNumber, packageName }: packageSignature) {
   const packagePath = path.join(process.cwd(), packageName, "package.json");
   const packageContent = fs.readFileSync(packagePath, "utf-8");
 
-  const privateKey = process.env.PRIVATE_KEY;
+  // Read the private key from the file
+  const privateKeyPath = path.join(process.cwd(), "private.key");
+  const privateKey = fs.readFileSync(privateKeyPath, "utf-8");
+
   const sign = crypto.createSign("SHA256");
   sign.update(serialNumber + packageContent);
   sign.end();
 
   if (privateKey) {
     const signature = sign.sign(privateKey, "base64");
-    fs.writeFileSync(path.join(packagePath, 'signature.txt'), signature);
+    fs.writeFileSync(path.join(packagePath, "signature.txt"), signature);
     return signature;
   } else {
-    throw new Error("\nPrivate key is missing. Please check your environment variables.");
+    throw new Error("\nPrivate key is missing. Please check your private key file.");
   }
 }

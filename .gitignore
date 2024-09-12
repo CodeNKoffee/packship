@@ -4,3 +4,12 @@
 
 # Ignore firebaseConfig.ts
 src/firebase/firebaseConfig.ts
+
+# node_modules
+node_modules
+
+# build
+dist
+
+# Keys
+*.key 
