@@ -194,14 +194,14 @@ export async function createPackage(serialNumber: string, userData: any) {
   }
 
   // Sign the packageData with signPackage
-  const signedPackage = signPackage({ packageData, privateKeyPath: "/private.key" });
+  const signedPackage = signPackage({ packageData, privateKeyPath: "private.key" });
   console.log('Package signed with signature:', signedPackage.signature);
 
   // Assign the signature after signing the package
   packageData.signature = signedPackage.signature; // Corrected to reference signedPackage
 
   // Verify the package to check for forgery
-  const isValid = verifyPackage({ packageData: signedPackage, publicKeyPath: "/public.key" });
+  const isValid = verifyPackage({ packageData: signedPackage, publicKeyPath: "public.key" });
   console.log('Package verification result:', isValid ? 'Valid' : 'Invalid');
 
   packageData = signedPackage;

@@ -1,5 +1,5 @@
 import { collection, getDocs, limit, query, where } from "firebase/firestore";
-import { db } from "../firebase/firebaseConfig";
+import { db } from "../firebase/firebaseConfig.js";
 
 export const verifySerialCode = async (serialNumber: string) => {
   try {

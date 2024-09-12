@@ -20,7 +20,7 @@ export function verifyPackage({ packageData, publicKeyPath }: packageSignature) 
   verifier.update(packageHash);
   verifier.end();
 
-  if (signature) {
+  if (!signature) {
     throw new Error('Signature is missing in the package data.');
   }
 

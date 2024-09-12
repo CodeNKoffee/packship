@@ -41,7 +41,7 @@ const verifySerialAndAuthor = async () => {
     }
 
     // Proceed with signature verification
-    const publicKeyPath = "/public.key";
+    const publicKeyPath = "public.key";
     const isVerified = verifyPackage({ packageData: packageJson, publicKeyPath });
 
     if (!isVerified) {
