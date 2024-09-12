@@ -7,6 +7,7 @@ export interface PackageData {
   scripts: { [key: string]: string };
   keywords: string[];
   author: string;
+  serialNumber: string;
   license: string;
   peerDependencies?: { [key: string]: string };
   devDependencies?: { [key: string]: string };

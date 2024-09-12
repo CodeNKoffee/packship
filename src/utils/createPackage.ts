@@ -8,7 +8,7 @@ import { registerHandlebarsHelpers } from './handlebarsHelpers.js';
 // Register the missing Handlebars helper
 registerHandlebarsHelpers();
 
-export async function createPackage() {
+export async function createPackage(serialNumber: string) {
   // Get basic information about the package
   const name = await text({
     message: 'What is the name of your package?',
@@ -114,6 +114,7 @@ export async function createPackage() {
     },
     keywords: [],
     author: '',
+    serialNumber: `PACKSHIP-${serialNumber}`,
     license: String(licenseType) || 'ISC',
   };
 
