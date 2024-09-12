@@ -1,22 +1,36 @@
-import crypto from "crypto";
-import fs from "fs";
-import path from "path";
-import { packageSignature } from "../types";
+import crypto from 'crypto';
+import fs from 'fs';
+import { packageSignature } from '../types/index.js';
 
-// Verify package signature
-export const verifyPackage = ({ serialNumber, packageName }: packageSignature) => {
-  const packagePath = path.join(process.cwd(), packageName, "package.json");
-  const packageContent = fs.readFileSync(packagePath, "utf-8");
-  const signature = fs.readFileSync(path.join(packagePath, "signature.txt"), "utf-8");
-
-  const publicKey = process.env.PUBLIC_KEY; // Public key for verification
-  const verify = crypto.createVerify("SHA256");
-  verify.update(serialNumber + packageContent);
-  verify.end();
-
-  if (publicKey) {
-    return verify.verify(publicKey, signature, "base64");
-  } else {
-    throw new Error("\nPublic key is missing. Please check your environment variables.");
+export function verifyPackage({ packageData, publicKeyPath }: packageSignature) {
+  if (!publicKeyPath) {
+    throw new Error('Private key path is not provided.');
   }
-};
+
+  const publicKey = fs.readFileSync(publicKeyPath, 'utf-8');
+
+  // Extract signature and data for verification
+  const { signature, ...packageDataWithoutSignature } = packageData;
+
+  // Hash the package data
+  const packageHash = crypto.createHash('sha256').update(JSON.stringify(packageDataWithoutSignature)).digest('hex');
+
+  // Verify the signature
+  const verifier = crypto.createVerify('RSA-SHA256');
+  verifier.update(packageHash);
+  verifier.end();
+
+  if (signature) {
+    throw new Error('Signature is missing in the package data.');
+  }
+
+  const isVerified = verifier.verify(publicKey, signature || '', 'base64');
+  
+  if (isVerified) {
+    console.log('Package signature is valid. No forgery detected.');
+  } else {
+    console.log('Invalid package signature! Possible forgery detected.');
+  }
+  
+  return isVerified;
+}

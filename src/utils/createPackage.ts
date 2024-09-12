@@ -4,11 +4,16 @@ import { renderTemplate } from './fileUtils.js';
 import { text, select, confirm } from '@clack/prompts';
 import { PackageData } from '../types/index.js';
 import { registerHandlebarsHelpers } from './handlebarsHelpers.js';
+import { signPackage } from './signPackage.js';
+import { verifyPackage } from './verifyPackage.js';
 
 // Register the missing Handlebars helper
 registerHandlebarsHelpers();
 
-export async function createPackage(serialNumber: string) {
+export async function createPackage(serialNumber: string, userData: any) {
+  const authorFirstName = userData.firstName;
+  const authorLastName = userData.lastName;
+  const emailFromDB = userData.email;
   // Get basic information about the package
   const name = await text({
     message: 'What is the name of your package?',
@@ -113,9 +118,11 @@ export async function createPackage(serialNumber: string) {
       test: 'echo "Error: no test specified" && exit 1'
     },
     keywords: [],
-    author: '',
+    author: `${authorFirstName} ${authorLastName}`,
+    email: emailFromDB,
     serialNumber: `PACKSHIP-${serialNumber}`,
-    license: String(licenseType) || 'ISC',
+    license: String(licenseType) || 'MIT',
+    signature: ''
   };
 
   // Dynamically adjust package.json fields based on user choices
@@ -185,6 +192,19 @@ export async function createPackage(serialNumber: string) {
       postcss: '^8.4.5'
     };
   }
+
+  // Sign the packageData with signPackage
+  const signedPackage = signPackage({ packageData, privateKeyPath: "/private.key" });
+  console.log('Package signed with signature:', signedPackage.signature);
+
+  // Assign the signature after signing the package
+  packageData.signature = signedPackage.signature; // Corrected to reference signedPackage
+
+  // Verify the package to check for forgery
+  const isValid = verifyPackage({ packageData: signedPackage, publicKeyPath: "/public.key" });
+  console.log('Package verification result:', isValid ? 'Valid' : 'Invalid');
+
+  packageData = signedPackage;
 
   // Set up the package directory
   const packageDir = path.join(process.cwd(), String(name));

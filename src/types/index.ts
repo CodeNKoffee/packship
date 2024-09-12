@@ -2,6 +2,7 @@ export interface PackageData {
   name: string;
   version: string;
   description: string;
+  email: string;
   main: string;
   module: string;
   scripts: { [key: string]: string };
@@ -13,6 +14,8 @@ export interface PackageData {
   devDependencies?: { [key: string]: string };
   dependencies?: { [key: string]: string };
   files?: string[];
+  homepage?: string;
+  signature?: string;
   repository?: {
     type: string;
     url: string;
@@ -20,7 +23,6 @@ export interface PackageData {
   bugs?: {
     url: string;
   };
-  homepage?: string;
 }
 
 export type FileConfig = {
@@ -30,6 +32,7 @@ export type FileConfig = {
 };
 
 export interface packageSignature {
-  serialNumber: string;
-  packageName: string;
+  packageData: PackageData;
+  privateKeyPath?: string;
+  publicKeyPath?: string;
 }

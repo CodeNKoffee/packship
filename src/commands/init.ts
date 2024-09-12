@@ -29,7 +29,7 @@ initCommand
       }
 
       // Call the utility function to verify the serial code
-      const { isValid, serialDoc, serialData } = await verifySerialCode(cleanedSerialNumber);
+      const { isValid, serialDoc, serialData, userData } = await verifySerialCode(cleanedSerialNumber);
 
       if (isValid && serialDoc && serialData) {
         if (serialData.isUsed) {
@@ -58,7 +58,7 @@ initCommand
           console.log("Success! The serial code is valid and has been used. Remember, it can only be used once.");
 
           // Proceed with package creation
-          const packageName = await createPackage(cleanedSerialNumber);
+          const packageName = await createPackage(cleanedSerialNumber, userData);
           console.log(`Initialized your new npm package: ${String(packageName)}\n\nHappy packshipping! 📦🛻💨\n`);
         }
       } else {
