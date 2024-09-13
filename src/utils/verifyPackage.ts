@@ -27,9 +27,9 @@ export function verifyPackage({ packageData, publicKeyPath }: packageSignature) 
   const isVerified = verifier.verify(publicKey, signature || "", "base64");
   
   if (isVerified) {
-    console.log("Package signature is valid. No forgery detected.");
+    console.log("\n\x1b[32m%s\x1b[0m", "Package signature is valid. No forgery detected.");
   } else {
-    console.log("\x1b[31m%s\x1b[0m", "[WARNING]: INVALID PACKAGE SIGNATURE! Possible forgery detected.");
+    console.log("\n\x1b[31m%s\x1b[0m", "[WARNING]: INVALID PACKAGE SIGNATURE! Possible forgery detected.");
   }
   
   return isVerified;

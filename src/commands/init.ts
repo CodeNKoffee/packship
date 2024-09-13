@@ -68,8 +68,8 @@ initCommand
         process.exit();
       }
     } catch (error) {
-      console.error("\x1b[31m%s\x1b[0m", "An error occurred during the process:", error);
-      console.log("\x1b[31m%s\x1b[0m", "This could be an internal server issue. Please try again later.");
+      console.error("\n\x1b[31m%s\x1b[0m", "An error occurred during the process:", error);
+      console.log("\n\x1b[31m%s\x1b[0m", "This could be an internal server issue. Please try again later.");
       process.exit();
     }
   });

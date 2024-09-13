@@ -12,7 +12,7 @@ const { author, email, serialNumber: packageSerial } = packageJson;
 
 // Ensure serialNumber exists in package.json
 if (!packageSerial || !packageSerial.startsWith("PACKSHIP-")) {
-  console.log("\x1b[31m%s\x1b[0m", "Invalid serial number format. Ensure it starts with 'PACKSHIP-'.");
+  console.log("\n\x1b[31m%s\x1b[0m", "Invalid serial number format. Ensure it starts with 'PACKSHIP-'.");
   process.exit(1); // Exit with an error code to prevent publishing
 }
 
@@ -26,7 +26,7 @@ const verifySerialAndAuthor = async () => {
     const { isValid, serialData, userData } = await verifySerialCode(hashedSerialCodeFromPackage);
 
     if (!isValid || !serialData) {
-      console.log("\x1b[31m%s\x1b[0m", "[WARNING]: Invalid or missing serial code. You cannot publish this package.");
+      console.log("\n\x1b[31m%s\x1b[0m", "[WARNING]: Invalid or missing serial code. You cannot publish this package.");
       process.exit(1); // Prevent publishing
     }
 
@@ -34,7 +34,7 @@ const verifySerialAndAuthor = async () => {
     const fullName = `${userData.firstName} ${userData.lastName}`;
 
     if (userData.email !== email && fullName !== author) {
-      console.log("\x1b[31m%s\x1b[0m", "[WARNING]: AUTHOR MISMATCH! The registered buyer is different from the package author.");
+      console.log("\n\x1b[31m%s\x1b[0m", "[WARNING]: AUTHOR MISMATCH! The registered buyer is different from the package author.");
       process.exit(1); // Prevent publishing
     }
 
@@ -43,13 +43,13 @@ const verifySerialAndAuthor = async () => {
     const isVerified = verifyPackage({ packageData: packageJson, publicKeyPath });
 
     if (!isVerified) {
-      console.log("\x1b[31m%s\x1b[0m", "[WARNING]: Package verification failed. You cannot publish this package.");
+      console.log("\n\x1b[31m%s\x1b[0m", "[WARNING]: Package verification failed. You cannot publish this package.");
       process.exit(1); // Prevent publishing
     } else {
-      console.log("\x1b[31m%s\x1b[0m", "Package verified. Proceeding with publishing.");
+      console.log("\n\x1b[31m%s\x1b[0m", "Package verified. Proceeding with publishing.");
     }
   } catch (error) {
-    console.error("\x1b[31m%s\x1b[0m", "An error occurred during the verification process:", error);
+    console.error("An error occurred during the verification process:", error);
     process.exit(1); // Exit with an error code to prevent publishing
   }
 };

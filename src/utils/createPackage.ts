@@ -197,14 +197,18 @@ export async function createPackage(serialNumber: string, userData: any) {
 
   // Sign the packageData with signPackage
   const signedPackage = signPackage({ packageData, privateKeyPath: "private.key" });
-  console.log("Package signed with signature:", signedPackage.signature);
+  if (process.env.NODE_ENV === "development") {
+    console.log("\n\x1b[32m%s\x1b[0m", "Package signed with signature:", signedPackage.signature);
+  }
 
   // Assign the signature after signing the package
   packageData.signature = signedPackage.signature; // Corrected to reference signedPackage
 
   // Verify the package to check for forgery
   const isValid = verifyPackage({ packageData: signedPackage, publicKeyPath: "public.key" });
-  console.log("Package verification result:", isValid ? "Valid" : "Invalid");
+  if (process.env.NODE_ENV === "development") {
+    console.log("\nPackage verification result:", isValid ? "Valid" : "Invalid");
+  }
 
   packageData = signedPackage;
 
@@ -313,7 +317,7 @@ export async function createPackage(serialNumber: string, userData: any) {
     })
   );
 
-  console.log("Package setup completed successfully.");
+  console.log("\n\x1b[32m%s\x1b[0m", "Package setup completed successfully.");
 
   return name;
 }

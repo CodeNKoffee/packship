@@ -18,7 +18,7 @@ const versionCommand = new Command("version");
 versionCommand
   .description("Display the current version of packship")
   .action(() => {
-    console.log(`packship v${getVersion()}`);
+    console.log(`\npackship v${getVersion()}`);
   });
 
 export default versionCommand;
