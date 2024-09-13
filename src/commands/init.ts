@@ -61,7 +61,7 @@ initCommand
 
           // Proceed with package creation
           const packageName = await createPackage(cleanedSerialNumber, userData);
-          console.log(`Initialized your new npm package: ${String(packageName)}\n\nHappy packshipping! 📦🛻💨\n`);
+          console.log(`\nInitialized your new npm package: ${String(packageName)}\n\nHappy packshipping! 📦🛻💨\n`);
         }
       } else {
         console.log("\n\x1b[31m%s\x1b[0m", "Invalid serial number. Please check and try again.");

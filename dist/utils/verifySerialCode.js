@@ -1,8 +1,10 @@
 import { collection, getDocs, limit, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig.js";
-export const verifySerialCode = async (serialNumber) => {
+export const verifySerialCode = async (hashedSerialCode) => {
     try {
-        const serialQuery = query(collection(db, "fulfilledOrders"), where("serialCode", "==", serialNumber), limit(1) // Fetch one document
+        // Query Firestore using the hashed serial code
+        const serialQuery = query(collection(db, "fulfilledOrders"), where("hashedSerialCode", "==", hashedSerialCode), // Search by hashed serial code
+        limit(1) // Fetch only one document
         );
         const serialSnapshot = await getDocs(serialQuery);
         if (!serialSnapshot.empty) {
@@ -11,7 +13,7 @@ export const verifySerialCode = async (serialNumber) => {
             const userData = {
                 email: serialData.email,
                 firstName: serialData.firstName,
-                lastName: serialData.lastName
+                lastName: serialData.lastName,
             };
             return { isValid: true, serialDoc, serialData, userData }; // Include serialData containing buyer email
         }
