@@ -1,24 +1,24 @@
-import { Command } from 'commander';
-import { createPackage } from '../utils/createPackage.js';
-import { verifySerialCode } from '../utils/verifySerialCode.js'; // Import the new util function
-import { confirm, text } from '@clack/prompts';
+import { Command } from "commander";
+import { createPackage } from "../utils/createPackage.js";
+import { verifySerialCode } from "../utils/verifySerialCode.js"; // Import the new util function
+import { confirm, text } from "@clack/prompts";
 import { updateDoc, doc } from "firebase/firestore";
 import dotenvSafe from "dotenv-safe";
-import { db } from '../firebase/firebaseConfig.js';
-import { hashSerial } from '../utils/hashSerialCode.js';
+import { db } from "../firebase/firebaseConfig.js";
+import { hashSerial } from "../utils/hashSerialCode.js";
 
 dotenvSafe.config();
 
 const initCommand = new Command("init");
 
 initCommand
-  .description('Initialize a new npm package')
+  .description("Initialize a new npm package")
   .action(async () => {
     try {
       // Prompt the user for their serial number
       const serialNumber = await text({
-        message: 'Please enter your serial number:',
-        validate: (value) => (typeof value === 'string' && value.trim() ? undefined : 'Serial number is required.')
+        message: "Please enter your serial number:",
+        validate: (value) => (typeof value === "string" && value.trim() ? undefined : "Serial number is required.")
       });
 
       const cleanedSerialNumber = String(serialNumber).trim(); // Ensure no extra whitespace or quotes
@@ -43,7 +43,7 @@ initCommand
         console.log("\n\x1b[33m%s\x1b[0m", "PLEASE NOTE: Once you begin the package creation process, the serial code will be marked as used and cannot be reused. However, you'll have the flexibility to modify your package details later.");
 
         const proceedPackageCreation = await confirm({
-          message:  'Would you like to start creating your package now? This action will mark your serial code as used.',
+          message:  "Would you like to start creating your package now? This action will mark your serial code as used.",
           initialValue: true
         });
 

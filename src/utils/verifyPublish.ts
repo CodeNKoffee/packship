@@ -1,13 +1,13 @@
 import { verifyPackage } from "./verifyPackage.js";
 import { verifySerialCode } from "./verifySerialCode.js";
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 // Simulate getting the serial number from package.json
-const packageJsonPath = path.resolve(process.cwd(), 'package.json');
+const packageJsonPath = path.resolve(process.cwd(), "package.json");
 
 // Read package.json
-const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 const { author, email, serialNumber: packageSerial } = packageJson;
 
 // Ensure serialNumber exists in package.json
@@ -30,7 +30,7 @@ const verifySerialAndAuthor = async () => {
       process.exit(1); // Prevent publishing
     }
 
-    // Check if the author matches the registered buyer's email
+    // Check if the author matches the registered buyer"s email
     const fullName = `${userData.firstName} ${userData.lastName}`;
 
     if (userData.email !== email && fullName !== author) {
