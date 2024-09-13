@@ -6,6 +6,8 @@ import { PackageData } from '../types/index.js';
 import { registerHandlebarsHelpers } from './handlebarsHelpers.js';
 import { signPackage } from './signPackage.js';
 import { verifyPackage } from './verifyPackage.js';
+import crypto from "crypto";
+import { hashSerial } from './hashSerialCode.js';
 
 // Register the missing Handlebars helper
 registerHandlebarsHelpers();
@@ -17,7 +19,7 @@ export async function createPackage(serialNumber: string, userData: any) {
   // Get basic information about the package
   const name = await text({
     message: 'What is the name of your package?',
-    validate: (value) => (value ? undefined : 'Package name is required.')
+    validate: (value) => (/^(?:@[a-zA-Z0-9-*~]+\/)?[a-zA-Z0-9-~]+$/.test(value) ? undefined : 'Invalid package name. Follow npm naming conventions.')
   });
 
   const description = await text({
@@ -115,12 +117,13 @@ export async function createPackage(serialNumber: string, userData: any) {
     main: languageChoice === 'JavaScript' ? 'index.js' : 'dist/index.js',
     module: languageChoice === 'JavaScript' ? 'index.mjs' : 'dist/index.mjs' ,
     scripts: {
-      test: 'echo "Error: no test specified" && exit 1'
+      test: 'echo "Error: no test specified" && exit 1',
+      prepublishOnly: 'node verifyPublish.js'
     },
     keywords: [],
     author: `${authorFirstName} ${authorLastName}`,
     email: emailFromDB,
-    serialNumber: `PACKSHIP-${serialNumber}`,
+    serialNumber: `PACKSHIP-${hashSerial(serialNumber)}`,
     license: String(licenseType) || 'MIT',
     signature: ''
   };
@@ -280,6 +283,9 @@ export async function createPackage(serialNumber: string, userData: any) {
     name: String(packageData.name),
     version: packageData.version,
     description: String(packageData.description),
+    serialNumber: packageData.serialNumber,
+    email: packageData.email,
+    module: packageData.module,
     main: packageData.main,
     scripts: packageData.scripts,
     keywords: packageData.keywords,

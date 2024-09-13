@@ -5,6 +5,7 @@ import { confirm, text } from '@clack/prompts';
 import { updateDoc, doc } from "firebase/firestore";
 import dotenvSafe from "dotenv-safe";
 import { db } from '../firebase/firebaseConfig.js';
+import { hashSerial } from '../utils/hashSerialCode.js';
 
 dotenvSafe.config();
 
@@ -28,8 +29,9 @@ initCommand
         return;
       }
 
+      const hashedSerialCode = hashSerial(cleanedSerialNumber)
       // Call the utility function to verify the serial code
-      const { isValid, serialDoc, serialData, userData } = await verifySerialCode(cleanedSerialNumber);
+      const { isValid, serialDoc, serialData, userData } = await verifySerialCode(hashedSerialCode);
 
       if (isValid && serialDoc && serialData) {
         if (serialData.isUsed) {

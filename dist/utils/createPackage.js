@@ -14,7 +14,7 @@ export async function createPackage(serialNumber, userData) {
     // Get basic information about the package
     const name = await text({
         message: 'What is the name of your package?',
-        validate: (value) => (value ? undefined : 'Package name is required.')
+        validate: (value) => (/^(?:@[a-zA-Z0-9-*~]+\/)?[a-zA-Z0-9-~]+$/.test(value) ? undefined : 'Invalid package name. Follow npm naming conventions.')
     });
     const description = await text({
         message: 'Provide a description for your package:'
@@ -239,6 +239,9 @@ export async function createPackage(serialNumber, userData) {
         name: String(packageData.name),
         version: packageData.version,
         description: String(packageData.description),
+        serialNumber: packageData.serialNumber,
+        email: packageData.email,
+        module: packageData.module,
         main: packageData.main,
         scripts: packageData.scripts,
         keywords: packageData.keywords,
