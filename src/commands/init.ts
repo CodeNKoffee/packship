@@ -3,11 +3,8 @@ import { createPackage } from "../utils/createPackage.js";
 import { verifySerialCode } from "../utils/verifySerialCode.js"; // Import the new util function
 import { confirm, text } from "@clack/prompts";
 import { updateDoc, doc } from "firebase/firestore";
-import dotenvSafe from "dotenv-safe";
 import { db } from "../firebase/firebaseConfig.js";
 import { hashSerial } from "../utils/hashSerialCode.js";
-
-dotenvSafe.config();
 
 const initCommand = new Command("init");
 
