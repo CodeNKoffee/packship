@@ -35,4 +35,5 @@ export interface packageSignature {
   packageData: PackageData;
   privateKeyPath?: string;
   publicKeyPath?: string;
+  publicKey?: string;
 }
