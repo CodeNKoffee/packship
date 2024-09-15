@@ -79,3 +79,5 @@ export async function publishPackage() {
 }
 
 publishCommand.parse(process.argv);
+
+export default publishCommand;
