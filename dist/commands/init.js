@@ -50,7 +50,7 @@ initCommand
                 console.log("Success! The serial code is valid and has been used. Remember, it can only be used once.");
                 // Proceed with package creation
                 const packageName = await createPackage(cleanedSerialNumber, userData);
-                console.log(`Initialized your new npm package: ${String(packageName)}\n\nHappy packshipping! 📦🛻💨\n`);
+                console.log(`\nInitialized your new npm package: ${String(packageName)}\n\nHappy packshipping! 📦🛻💨\n`);
             }
         }
         else {

@@ -100,7 +100,7 @@ export async function createPackage(serialNumber, userData) {
         module: languageChoice === "JavaScript" ? "index.mjs" : "dist/index.mjs",
         scripts: {
             test: "echo 'Error: no test specified' && exit 1",
-            prepublishOnly: "node verifyPublish.js"
+            "packship:publish": "packship publish",
         },
         keywords: [],
         author: `${authorFirstName} ${authorLastName}`,
@@ -180,7 +180,8 @@ export async function createPackage(serialNumber, userData) {
     // Assign the signature after signing the package
     packageData.signature = signedPackage.signature; // Corrected to reference signedPackage
     // Verify the package to check for forgery
-    const isValid = verifyPackage({ packageData: signedPackage, publicKeyPath: "public.key" });
+    const publicKeyPath = process.env.PUBLIC_KEY || "public.key";
+    const isValid = verifyPackage({ packageData: signedPackage, publicKeyPath });
     if (process.env.NODE_ENV === "development") {
         console.log("\nPackage verification result:", isValid ? "Valid" : "Invalid");
     }
