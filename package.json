@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "bin": {
     "packship": "dist/index.js",
-    "packship-generate": "dist/bin/index.js"
   },
   "type": "module",
   "scripts": {
