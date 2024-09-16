@@ -43,6 +43,11 @@ export async function publishPackage() {
     const localData = getLocalProjectData();
     const registryData = await checkNpmRegistry(localData.packageName);
 
+    if (!localData.serialNumber) {
+      console.error("Serial number missing from package.json. Run `packship init` to initialize your package, or restore the serial number if it was removed.");
+      process.exit(1);
+    }
+
     if (!registryData) {
       console.log("\nPackage does not exist on npm yet. Proceeding to publish...");
       // Execute npm publish
