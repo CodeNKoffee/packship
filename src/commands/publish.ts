@@ -44,13 +44,13 @@ export async function publishPackage() {
     const registryData = await checkNpmRegistry(localData.packageName);
 
     if (!registryData) {
-      console.log("\n\x1b[31m%s\x1b[0m", "Package does not exist on npm. Proceeding to publish...");
+      console.log("\nPackage does not exist on npm yet. Proceeding to publish...");
       // Execute npm publish
       exec("npm publish", (err, stdout, stderr) => {
         if (err) {
           console.error(`Error during npm publish: ${stderr}`);
         } else {
-          console.log(`Publish successful: ${stdout}`);
+          console.log("\n\x1b[32m%s\x1b[0m", `Publish successful: ${stdout}`);
         }
       });
     } else {
@@ -58,13 +58,13 @@ export async function publishPackage() {
 
       // Check if author and package name match
       if (registryAuthor === localData.author) {
-        console.log("\n\x1b[31m%s\x1b[0m", "Package is valid and can be published.");
+        console.log("\n\x1b[32m%s\x1b[0m", "Package is valid and can be published.");
         // Execute npm publish
         exec("npm publish", (err, stdout, stderr) => {
           if (err) {
             console.error(`Error during npm publish: ${stderr}`);
           } else {
-            console.log(`Publish successful: ${stdout}`);
+            console.log("\n\x1b[32m%s\x1b[0m", `Publish successful: ${stdout}`);
           }
         });
       } else {
