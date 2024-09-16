@@ -44,7 +44,7 @@ export async function publishPackage() {
     const registryData = await checkNpmRegistry(localData.packageName);
 
     if (!localData.serialNumber) {
-      console.error("Serial number missing from package.json. Run `packship init` to initialize your package, or restore the serial number if it was removed.");
+      console.error("\nSerial number missing from package.json. Run `packship init` to initialize your package, or restore the serial number if it was removed.");
       process.exit(1);
     }
 
