@@ -4,7 +4,11 @@ import * as path from "path";
 import { exec } from "child_process";
 import { Command } from "commander";
 
-const publishCommand = new Command();
+const publishCommand = new Command("publish");
+
+publishCommand
+  .description('Publish a package')
+  .action(publishPackage);
 
 // Function to get project data from package.json or .packshiprc
 function getLocalProjectData() {
@@ -34,12 +38,6 @@ async function checkNpmRegistry(packageName: string) {
 }
 
 // Main function to handle package publishing
-
-publishCommand
-  .command("publish")
-  .description('Publish a package')
-  .action(publishPackage);
-
 export async function publishPackage() {
   try {
     const localData = getLocalProjectData();
@@ -77,7 +75,5 @@ export async function publishPackage() {
     console.error(`Error: ${error}`);
   }
 }
-
-publishCommand.parse(process.argv);
 
 export default publishCommand;

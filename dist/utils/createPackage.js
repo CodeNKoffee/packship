@@ -233,7 +233,7 @@ export async function createPackage(serialNumber, userData) {
         ...(includeLicense ? [{ name: "LICENSE.md", template: "LICENSE.md.hbs", data: { name, licenseType } }] : []),
         ...(includeCodeOfConduct ? [{ name: "CODE_OF_CONDUCT.md", template: "CODE_OF_CONDUCT.md.hbs", data: { name } }] : []),
         ...(useEslint ? [{ name: ".eslintrc.json", template: "eslintrc.json.hbs", data: {} }] : []),
-        ...(useWebpack ? [{ name: "webpack.config.js", template: "webpack.config.hbs", data: {} }] : []),
+        ...(useWebpack ? [{ name: "webpack.config.js", template: "webpack.config.hbs", data: { libraryName: name } }] : []),
         // Add Babel config if it"s a React project
         ...(typeof projectType === "string" && projectType.startsWith("react-")
             ? [{ name: "babel.config.json", template: "babel.config.hbs", data: {} }]
