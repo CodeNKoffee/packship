@@ -13,7 +13,7 @@ function getLocalProjectData() {
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
     return {
-      serialNumber: packageJson.serialNumber || "UNKNOWN",  // Replace with actual logic if needed
+      serialNumber: packageJson.serialNumber || "UNKNOWN",  
       author: packageJson.author || "UNKNOWN",
       packageName: packageJson.name,
     };
