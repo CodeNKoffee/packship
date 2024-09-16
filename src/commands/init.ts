@@ -9,12 +9,13 @@ import { hashSerial } from "../utils/hashSerialCode.js";
 const initCommand = new Command("init");
 
 initCommand
-  .description("Initialize a new npm package")
+  .description("\nInitialize a new npm package")
   .action(async () => {
     try {
+      console.log("\nIf you don't have a copy, you can obtain a copy of the package by visiting packship.hatesoliman.dev");
       // Prompt the user for their serial number
       const serialNumber = await text({
-        message: "Please enter your serial number:",
+        message: "\nPlease enter your serial number:",
         validate: (value) => (typeof value === "string" && value.trim() ? undefined : "Serial number is required.")
       });
 
@@ -33,6 +34,7 @@ initCommand
       if (isValid && serialDoc && serialData) {
         if (serialData.isUsed) {
           console.log("\x1b[31m%s\x1b[0m", "This serial code has already been used. Each code can only be used once.");
+          console.log("You can get a copy of the package by visiting packship.hatesoliman.dev");
           return;
         } 
 
