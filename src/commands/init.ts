@@ -12,7 +12,7 @@ initCommand
   .description("\nInitialize a new npm package")
   .action(async () => {
     try {
-      console.log("\nIf you don't have a copy, you can obtain a copy of the package by visiting packship.hatesoliman.dev");
+      console.log("\n\x1b[33m%s\x1b[0m", "\n[NOTICE]: If you don't have a copy, you can obtain a copy of the package by visiting https://packship.hatemsoliman.dev");
       // Prompt the user for their serial number
       const serialNumber = await text({
         message: "\nPlease enter your serial number:",
@@ -33,9 +33,9 @@ initCommand
 
       if (isValid && serialDoc && serialData) {
         if (serialData.isUsed) {
-          console.log("\x1b[31m%s\x1b[0m", "This serial code has already been used. Each code can only be used once.");
-          console.log("You can get a copy of the package by visiting packship.hatesoliman.dev");
-          return;
+          console.log("\n\x1b[31m%s\x1b[0m", "This serial code has already been used. Each code can only be used once.");
+          console.log("\n\x1b[35m%s\x1b[0m", "Setup and ship your npm package faster with Packship by visiting https://packship.hatemsoliman.dev");
+          process.exit();
         } 
 
         console.log("\n\x1b[32m%s\x1b[0m", "Congratulations! Your serial code is valid and ready for use.");
