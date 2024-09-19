@@ -6,8 +6,24 @@ import { registerHandlebarsHelpers } from "./handlebarsHelpers.js";
 import { signPackage } from "./signPackage.js";
 import { verifyPackage } from "./verifyPackage.js";
 import { hashSerial } from "./hashSerialCode.js";
+import { generateKeyPairSync } from "crypto";
 // Register the missing Handlebars helper
 registerHandlebarsHelpers();
+// Generate a pair of public and private keys
+const { publicKey, privateKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    publicKeyEncoding: {
+        type: "spki",
+        format: "pem",
+    },
+    privateKeyEncoding: {
+        type: "pkcs8",
+        format: "pem",
+    },
+});
+// Write the keys to files
+await fs.promises.writeFile("public.key", publicKey);
+await fs.promises.writeFile("private.key", privateKey);
 export async function createPackage(serialNumber, userData) {
     const authorFirstName = userData.firstName;
     const authorLastName = userData.lastName;
