@@ -6,24 +6,9 @@ import { registerHandlebarsHelpers } from "./handlebarsHelpers.js";
 import { signPackage } from "./signPackage.js";
 import { verifyPackage } from "./verifyPackage.js";
 import { hashSerial } from "./hashSerialCode.js";
-import { generateKeyPairSync } from "crypto";
+import generateKeys from "./generateKeys.js";
 // Register the missing Handlebars helper
 registerHandlebarsHelpers();
-// Generate a pair of public and private keys
-const { publicKey, privateKey } = generateKeyPairSync("rsa", {
-    modulusLength: 2048,
-    publicKeyEncoding: {
-        type: "spki",
-        format: "pem",
-    },
-    privateKeyEncoding: {
-        type: "pkcs8",
-        format: "pem",
-    },
-});
-// Write the keys to files
-await fs.promises.writeFile("public.key", publicKey);
-await fs.promises.writeFile("private.key", privateKey);
 export async function createPackage(serialNumber, userData) {
     const authorFirstName = userData.firstName;
     const authorLastName = userData.lastName;
@@ -188,15 +173,17 @@ export async function createPackage(serialNumber, userData) {
             postcss: "^8.4.5"
         };
     }
+    // Generate cryptographic keys
+    const outputDir = path.join(process.cwd(), 'keys'); // Define where you want the keys stored
+    const { publicKeyPath, privateKeyPath } = generateKeys(outputDir);
     // Sign the packageData with signPackage
-    const signedPackage = signPackage({ packageData, privateKeyPath: "private.key" });
+    const signedPackage = signPackage({ packageData, privateKeyPath });
     if (process.env.NODE_ENV === "development") {
         console.log("\n\x1b[32m%s\x1b[0m", "Package signed with signature:", signedPackage.signature);
     }
     // Assign the signature after signing the package
     packageData.signature = signedPackage.signature; // Corrected to reference signedPackage
     // Verify the package to check for forgery
-    const publicKeyPath = process.env.PUBLIC_KEY || "public.key";
     const isValid = verifyPackage({ packageData: signedPackage, publicKeyPath });
     if (process.env.NODE_ENV === "development") {
         console.log("\nPackage verification result:", isValid ? "Valid" : "Invalid");
