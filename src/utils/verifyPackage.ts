@@ -1,7 +1,7 @@
 import * as crypto from "crypto";
-import { packageSignature } from "../types/index.js";
+import { PackageSignature } from "../types/index.js";
 
-export function verifyPackage({ packageData, publicKeyPath }: packageSignature) {
+export function verifyPackage({ packageData, publicKeyPath }: PackageSignature) {
   if (!publicKeyPath) {
     throw new Error("Public key is not provided.");
   }

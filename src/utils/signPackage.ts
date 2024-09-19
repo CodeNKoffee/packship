@@ -1,8 +1,8 @@
 import crypto from "crypto"
 import fs from "fs";
-import { packageSignature } from "../types";
+import { PackageSignature } from "../types";
 
-export function signPackage({ packageData, privateKeyPath }: packageSignature) {
+export function signPackage({ packageData, privateKeyPath }: PackageSignature) {
   if (!privateKeyPath) {
     throw new Error("Private key path is not provided.");
   }

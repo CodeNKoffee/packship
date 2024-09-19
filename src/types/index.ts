@@ -31,9 +31,14 @@ export type FileConfig = {
   data?: { name: string | symbol; description: string | symbol; licenseType?: string | symbol };
 };
 
-export interface packageSignature {
+export interface PackageSignature {
   packageData: PackageData;
   privateKeyPath?: string;
   publicKeyPath?: string;
   publicKey?: string;
+}
+
+export interface KeyPairPaths {
+  publicKeyPath: string;
+  privateKeyPath: string;
 }
