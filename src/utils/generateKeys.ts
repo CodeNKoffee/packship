@@ -1,12 +1,12 @@
-import { generateKeyPairSync } from "crypto";
+import crypto, { generateKeyPairSync } from "crypto";
 import * as fs from "fs";
 import * as path from "path";
 import { KeyPairPaths } from "../types";
 
 // Function to generate key pair
 export default function generateKeys(outputDir: string): KeyPairPaths {
-  const { publicKey, privateKey } = generateKeyPairSync('rsa', {
-    modulusLength: 2048, // Length of key in bits
+  const { publicKey, privateKey } = generateKeyPairSync('ec', {
+    namedCurve: 'sect239k1',
     publicKeyEncoding: {
       type: 'spki',
       format: 'pem',
@@ -16,6 +16,12 @@ export default function generateKeys(outputDir: string): KeyPairPaths {
       format: 'pem',
     },
   });
+
+  // const importedKey = crypto.createPrivateKey({
+  //   key: privateKey,
+  //   format: "pem",
+  //   type: "pkcs8",
+  // })
 
   // Create output directory if it doesn't exist
   if (!fs.existsSync(outputDir)) {
