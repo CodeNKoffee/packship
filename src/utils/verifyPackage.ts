@@ -10,7 +10,7 @@ export function verifyPackage({ packageData, publicKeyPath }: PackageSignature) 
   const { signature, ...packageDataWithoutSignature } = packageData;
 
   // Hash the package data
-  const packageHash = crypto.createHash("sha256").update(JSON.stringify(packageDataWithoutSignature)).digest("hex");
+  const packageHash = crypto.createHash("SHA256").update(JSON.stringify(packageDataWithoutSignature)).digest("hex");
 
   // Verify the signature
   const verifier = crypto.createVerify("RSA-SHA256");

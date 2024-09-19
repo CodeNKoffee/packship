@@ -14,7 +14,7 @@ export function signPackage({ packageData, privateKeyPath }: PackageSignature) {
   delete packageDataWithoutSignature.signature;
 
  // Create a hash of the package data
-  const packageHash = crypto.createHash("sha256").update(JSON.stringify(packageDataWithoutSignature)).digest("hex");
+  const packageHash = crypto.createHash("SHA256").update(JSON.stringify(packageDataWithoutSignature)).digest("hex");
   // Sign the hash with the private key
   const signer = crypto.createSign("RSA-SHA256");
   signer.update(packageHash);
