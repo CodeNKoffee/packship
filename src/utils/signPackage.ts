@@ -20,7 +20,7 @@ export function signPackage({ packageData, privateKeyPath }: PackageSignature) {
   signer.update(packageHash);
   signer.end();
 
-  const signature = signer.sign(privateKey, "base64");
+  const signature = signer.sign(privateKey, "hex");
   
   return { ...packageData, signature };
 }
