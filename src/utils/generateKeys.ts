@@ -6,7 +6,7 @@ import { KeyPairPaths } from "../types";
 // Function to generate key pair
 export default function generateKeys(outputDir: string): KeyPairPaths {
   const { publicKey, privateKey } = generateKeyPairSync('ec', {
-    namedCurve: 'prime256v1',
+    namedCurve: 'secp384r1',
     publicKeyEncoding: {
       type: 'spki',
       format: 'pem',
