@@ -21,7 +21,7 @@ export function verifyPackage({ packageData, publicKeyPath }: PackageSignature) 
     throw new Error("Signature is missing in the package data.");
   }
 
-  const isVerified = verifier.verify(publicKeyPath, signature || "", "base64");
+  const isVerified = verifier.verify(publicKeyPath, signature || "", "hex");
 
   if (isVerified) {
     console.log("\n\x1b[32m%s\x1b[0m", "Package signature is valid. No forgery detected.");
