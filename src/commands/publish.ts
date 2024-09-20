@@ -74,7 +74,7 @@ export async function publishPackage() {
         });
       } else {
         console.log(`Registered Author: ${registryAuthor} and Local Data: ${localData.author}`)
-        console.error("Package name or author mismatch. Cannot publish.");
+        console.error("Package name or author mismatch. Cannot publish. Try publishing with a different name OR Proceed with current name (if you are the rightful owner)");
       }
     }
   } catch (error) {
