@@ -5,6 +5,7 @@ export interface PackageData {
   email: string;
   main: string;
   module: string;
+  type: string;
   scripts: { [key: string]: string };
   keywords: string[];
   author: string;
