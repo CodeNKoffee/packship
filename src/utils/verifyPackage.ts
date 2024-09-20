@@ -1,4 +1,5 @@
 import * as crypto from "crypto";
+import * as fs from "fs";
 import { PackageSignature } from "../types/index.js";
 
 export function verifyPackage({ packageData, publicKeyPath }: PackageSignature) {
@@ -21,7 +22,8 @@ export function verifyPackage({ packageData, publicKeyPath }: PackageSignature) 
     throw new Error("Signature is missing in the package data.");
   }
 
-  const isVerified = verifier.verify(publicKeyPath, signature || "", "hex");
+  const publicKey = fs.readFileSync(publicKeyPath, "utf8");
+  const isVerified = verifier.verify(publicKey, signature, "hex");
 
   if (isVerified) {
     console.log("\n\x1b[32m%s\x1b[0m", "Package signature is valid. No forgery detected.");
