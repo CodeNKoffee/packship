@@ -38,6 +38,20 @@ async function checkNpmRegistry(packageName: string) {
   }
 }
 
+function is2FAEnabled(): Promise<boolean> {
+  return new Promise((resolve) => {
+    exec('npm profile get --json', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error checking 2FA status: ${error}`);
+        resolve(false);
+      } else {
+        const profile = JSON.parse(stdout);
+        resolve(profile.tfa && profile.tfa.mode !== 'disabled');
+      }
+    });
+  });
+}
+
 // Function to get OTP from user
 function getOTP(): Promise<string> {
   const rl = readline.createInterface({
@@ -46,7 +60,7 @@ function getOTP(): Promise<string> {
   });
 
   return new Promise((resolve) => {
-    rl.question('Enter your One-Time Password (OTP): ', (otp) => {
+    rl.question('Enter your NPM One-Time Password (OTP): ', (otp) => {
       rl.close();
       resolve(otp);
     });
@@ -55,9 +69,16 @@ function getOTP(): Promise<string> {
 
 // Function to execute npm publish with OTP
 async function executeNpmPublish() {
-  const otp = await getOTP();
+  const twoFAEnabled = await is2FAEnabled();
+  let publishCommand = 'npm publish';
+  
+  if (twoFAEnabled) {
+    const otp = await getOTP();
+    publishCommand += ` --otp=${otp}`;
+  }
+
   return new Promise((resolve, reject) => {
-    exec(`npm publish --otp=${otp}`, (err, stdout, stderr) => {
+    exec(publishCommand, (err, stdout, stderr) => {
       if (err) {
         reject(`Error during npm publish: ${stderr}`);
       } else {
