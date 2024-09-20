@@ -99,6 +99,7 @@ export async function createPackage(serialNumber, userData) {
         description: String(description),
         main: languageChoice === "JavaScript" ? "index.js" : "dist/index.js",
         module: languageChoice === "JavaScript" ? "index.mjs" : "dist/index.mjs",
+        type: typeof projectType === "string" && projectType.startsWith("node-") ? "commonjs" : "module",
         scripts: {
             test: "echo 'Error: no test specified' && exit 1",
             "packship:publish": "packship publish",
