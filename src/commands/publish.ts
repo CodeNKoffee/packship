@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { exec } from "child_process";
 import { Command } from "commander";
+import readline from 'readline';
 
 const publishCommand = new Command("publish");
 
@@ -37,6 +38,35 @@ async function checkNpmRegistry(packageName: string) {
   }
 }
 
+// Function to get OTP from user
+function getOTP(): Promise<string> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  return new Promise((resolve) => {
+    rl.question('Enter your One-Time Password (OTP): ', (otp) => {
+      rl.close();
+      resolve(otp);
+    });
+  });
+}
+
+// Function to execute npm publish with OTP
+async function executeNpmPublish() {
+  const otp = await getOTP();
+  return new Promise((resolve, reject) => {
+    exec(`npm publish --otp=${otp}`, (err, stdout, stderr) => {
+      if (err) {
+        reject(`Error during npm publish: ${stderr}`);
+      } else {
+        resolve(`Publish successful: ${stdout}`);
+      }
+    });
+  });
+}
+
 // Main function to handle package publishing
 export async function publishPackage() {
   try {
@@ -50,28 +80,24 @@ export async function publishPackage() {
 
     if (!registryData) {
       console.log("\nPackage does not exist on npm yet. Proceeding to publish...");
-      // Execute npm publish
-      exec("npm publish", (err, stdout, stderr) => {
-        if (err) {
-          console.error(`Error during npm publish: ${stderr}`);
-        } else {
-          console.log("\n\x1b[32m%s\x1b[0m", `Publish successful: ${stdout}`);
-        }
-      });
+      try {
+        const result = await executeNpmPublish();
+        console.log("\n\x1b[32m%s\x1b[0m", result);
+      } catch (error) {
+        console.error(`Error during npm publish: ${error}`);
+      }
     } else {
       const registryAuthor = registryData.author?.email;
 
       // Check if author and package name match
       if (registryAuthor === localData.author) {
         console.log("\n\x1b[32m%s\x1b[0m", "Package is valid and can be published.");
-        // Execute npm publish
-        exec("npm publish", (err, stdout, stderr) => {
-          if (err) {
-            console.error(`Error during npm publish: ${stderr}`);
-          } else {
-            console.log("\n\x1b[32m%s\x1b[0m", `Publish successful: ${stdout}`);
-          }
-        });
+        try {
+          const result = await executeNpmPublish();
+          console.log("\n\x1b[32m%s\x1b[0m", result);
+        } catch (error) {
+          console.error(`Error during npm publish: ${error}`);
+        }
       } else {
         console.log(`Registered Author: ${registryAuthor} and Local Data: ${localData.author}`)
         console.error("Package name or author mismatch. Cannot publish. Try publishing with a different name OR Proceed with current name (if you are the rightful owner)");
