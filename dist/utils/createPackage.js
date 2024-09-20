@@ -136,6 +136,7 @@ export async function createPackage(serialNumber, userData) {
                 "@babel/preset-typescript": "^7.24.7",
                 "@types/react": "^18.3.3",
                 "@types/react-dom": "^18.3.0",
+                "ts-loader": "^9.5.1",
                 typescript: "^4.9.5"
             };
             packageData.scripts.build = "tsc && npm run build-babel";
