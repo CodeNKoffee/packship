@@ -25,12 +25,46 @@ npm i -g packship@latest
 ### Setting Up Your Package with Packship
 
 ```bash
-npx -y packship init
+packship init
 ```
 
 Follow the prompts, and your package will be ready!
 
 ## 2. Dependency Installation
+
+### Initialize `node modules` and `package-lock.json`
+
+Install the necessary dependencies to ensure your package runs smoothly.
+
+```bash
+npm install
+```
+
+If you encounter dependency resolution issues, similar to this:
+
+![Image Title](./src/assets/dep-res-issue.png)
+
+Run the following command to install dependencies:
+
+```bash
+npm install --legacy-peer-deps
+```
+
+If you see an EACCES error, run the following command to fix permissions:
+
+![Image Title](./src/assets/eas-issue.png)
+
+```bash
+sudo chown -R $(whoami) "$(npm config get cache)"
+```
+
+Then, try installing the dependencies again:
+
+```bash
+npm install
+```
+
+If you encounter deprecated package warnings, you can safely ignore them or update the packages as needed.
 
 Install the necessary dependencies to avoid redundancy and ensure proper package setup.
 
