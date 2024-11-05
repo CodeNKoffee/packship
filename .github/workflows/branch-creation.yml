@@ -1,0 +1,61 @@
+name: Automated Branch Creation
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v3
+
+    - name: Extract issue details
+      id: extract_issue
+      run: |
+        issue_title=$(echo "${{ github.event.issue.title }}" | tr ' ' '-' | tr -dc '[:alnum:]-')
+        
+        # Determine the issue type based on the label
+        issue_type=""
+        for label in "${{ github.event.issue.labels[*] }}"; do
+          case "$label" in
+            "⚙️ Efficiency & Performance")
+              issue_type="efficiency"
+              ;;
+            "✨ Feature Request")
+              issue_type="feature"
+              ;;
+            "🐛 Bug Report" | "⚠️ Security Vulnerability")
+              issue_type="bug"
+              ;;
+            "📝 Documentation")
+              issue_type="documentation"
+              ;;
+            "🤔 Support or Usage Questions")
+              issue_type="support"
+              ;;
+          esac
+        done
+
+        # Fallback in case no matching label is found
+        if [ -z "$issue_type" ]; then
+          issue_type="misc"
+        fi
+
+        echo "issue_title=$issue_title" >> $GITHUB_ENV
+        echo "issue_type=$issue_type" >> $GITHUB_ENV
+        
+    - name: Create branch name
+      id: branch_name
+      run: echo "branch_name=${{ env.issue_type }}/PACKSHIP-${{ env.issue_title }}" >> $GITHUB_ENV
+    
+    - name: Create and push branch
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+        git checkout -b ${{ env.branch_name }} || git checkout ${{ env.branch_name }}
+        git push origin ${{ env.branch_name }}
