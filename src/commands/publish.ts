@@ -32,13 +32,17 @@ function extractAuthorEmail(author: string | {email?: string, name?: string} | u
   
   // If author is an object with email property
   if (typeof author === 'object') {
-    console.log('Author is an object:', author);
+    if (process.env.NODE_ENV === "development") {
+      console.log('Author is an object:', author);
+    }
     if (author.email) {
       return author.email;
     }
     // If no email but has name, log this case
     if (author.name) {
-      console.log('Author object has name but no email:', author.name);
+      if (process.env.NODE_ENV === "development") {
+        console.log('Author object has name but no email:', author.name);
+      }
     }
     return "UNKNOWN";
   }
@@ -51,11 +55,15 @@ function extractAuthorEmail(author: string | {email?: string, name?: string} | u
       return emailMatch[1];
     }
     // If no email format found in string
-    console.log('No email format found in author string');
+    if (process.env.NODE_ENV === "development") {
+      console.log('No email format found in author string');
+    }
     return author;
   }
   
-  console.log('Author is of unexpected type:', typeof author);
+  if (process.env.NODE_ENV === "development") {
+    console.log('Author is of unexpected type:', typeof author);
+  }
   return "UNKNOWN";
 }
 
@@ -65,11 +73,13 @@ function getLocalProjectData() {
   
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-    console.log('\nPackage.json data:', {
-      name: packageJson.name,
-      author: packageJson.author,
-      serialNumber: packageJson.serialNumber || "UNKNOWN"
-    });
+    if (process.env.NODE_ENV === "development") {
+      console.log('\nPackage.json data:', {
+        name: packageJson.name,
+        author: packageJson.author,
+        serialNumber: packageJson.serialNumber || "UNKNOWN"
+      });
+    }
     
     return {
       serialNumber: packageJson.serialNumber || "UNKNOWN",  
@@ -86,21 +96,25 @@ async function checkNpmRegistry(packageName: string) {
   const url = `https://registry.npmjs.org/${packageName}`;
   try {
     const response = await axios.get(url);
-    console.log('\nNPM Registry response for latest version:', {
-      author: response.data.author,
-      maintainers: response.data.maintainers,
-      'dist-tags': response.data['dist-tags'],
-    });
+    if (process.env.NODE_ENV === "development") {
+      console.log('\nNPM Registry response for latest version:', {
+        author: response.data.author,
+        maintainers: response.data.maintainers,
+        'dist-tags': response.data['dist-tags'],
+      });
+    }
     
     // Get the latest version data
     const latestVersion = response.data['dist-tags']?.latest;
     const latestVersionData = response.data.versions?.[latestVersion];
-    
-    console.log('\nLatest version data:', {
-      version: latestVersion,
-      author: latestVersionData?.author,
-      maintainers: latestVersionData?.maintainers
-    });
+  
+    if (process.env.NODE_ENV === "development") {
+      console.log('\nLatest version data:', {
+        version: latestVersion,
+        author: latestVersionData?.author,
+        maintainers: latestVersionData?.maintainers
+      });
+    }
     
     return response.data;
   } catch (error) {
@@ -168,7 +182,9 @@ export async function publishPackage() {
   try {
     console.log('\n=== Starting Package Publication Process ===');
     const localData = getLocalProjectData();
-    console.log('\nLocal project data:', debugStringify(localData));
+    if (process.env.NODE_ENV === "development") {
+      console.log('\nLocal project data:', debugStringify(localData));
+    }
     
     const registryData = await checkNpmRegistry(localData.packageName);
     
@@ -200,10 +216,12 @@ export async function publishPackage() {
       
       const localAuthor = localData.author;
 
-      console.log('\n=== Author Comparison ===');
-      console.log('Registry Author:', registryAuthor);
-      console.log('Local Author:', localAuthor);
-      console.log('Match Status:', registryAuthor === localAuthor ? 'MATCH' : 'NO MATCH');
+      if (process.env.NODE_ENV === "development") {
+        console.log('\n=== Author Comparison ===');
+        console.log('Registry Author:', registryAuthor);
+        console.log('Local Author:', localAuthor);
+        console.log('Match Status:', registryAuthor === localAuthor ? 'MATCH' : 'NO MATCH');
+      }
 
       // If registry author is UNKNOWN, allow publication
       if (registryAuthor === "UNKNOWN" || registryAuthor === localAuthor) {
@@ -216,8 +234,10 @@ export async function publishPackage() {
         }
       } else {
         console.error("\nAuthor mismatch detected:");
-        console.error(`Registry author: ${registryAuthor}`);
-        console.error(`Local author: ${localAuthor}`);
+        if (process.env.NODE_ENV === "development") {
+          console.error(`Registry author: ${registryAuthor}`);
+          console.error(`Local author: ${localAuthor}`);
+        }
         console.error("\nCannot publish. To resolve this:");
         console.error("1. Ensure your package.json author email matches the npm registry");
         console.error("2. Verify you are logged in with the correct npm account");
