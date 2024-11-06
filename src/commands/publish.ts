@@ -23,7 +23,9 @@ function debugStringify(obj: any): string {
 // Function to parse author string into email
 function extractAuthorEmail(author: string | {email?: string, name?: string} | undefined): string {
   // Debug log the incoming author data
-  console.log('\nAuthor data received:', debugStringify(author));
+  if (process.env.NODE_ENV === "development") {
+    console.log('\nAuthor data received:', debugStringify(author));
+  }
   
   if (!author) {
     console.log('Author is undefined or null');
@@ -49,7 +51,9 @@ function extractAuthorEmail(author: string | {email?: string, name?: string} | u
   
   // If author is a string in the format "Name <email>"
   if (typeof author === 'string') {
-    console.log('Author is a string:', author);
+    if (process.env.NODE_ENV === "development") {
+      console.log('Author is a string:', author);
+    }
     const emailMatch = author.match(/<(.+)>/);
     if (emailMatch) {
       return emailMatch[1];
