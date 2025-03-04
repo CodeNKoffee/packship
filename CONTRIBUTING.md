@@ -59,4 +59,4 @@ By participating in this project, you agree to abide by our Code of Conduct. Ple
 
 ## License
 
-By contributing to PackShip, you agree that your contributions will be licensed under the project's MIT license. 
+By contributing to PackShip, you agree that your contributions will be licensed under the project's MIT license.
