@@ -6,18 +6,39 @@ import Handlebars from "handlebars";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Define the renderTemplate function to read and compile Handlebars templates
-export function renderTemplate(templatePath: string, data: { name?: string; description?: string }): string {
-  const templateContent = fs.readFileSync(path.join(__dirname, "../../templates", templatePath), "utf-8");
-  const template = Handlebars.compile(templateContent);
-  const renderedTemplate = template(data);
-  return renderedTemplate;
+/**
+ * Renders a Handlebars template with the provided data
+ * @param templatePath Path to the template file or template content
+ * @param data Data to be used in the template
+ * @returns Rendered template as a string
+ */
+export function renderTemplate(templatePath: string, data: Record<string, any>): string {
+  try {
+    let templateContent: string;
+
+    // Check if templatePath is a file path and if the file exists
+    if (fs.existsSync(templatePath)) {
+      templateContent = fs.readFileSync(templatePath, "utf-8");
+    } else {
+      // If not a file path, assume it's the template content
+      templateContent = templatePath;
+    }
+
+    const template = Handlebars.compile(templateContent);
+    return template(data);
+  } catch (error) {
+    console.error(`Error rendering template: ${error instanceof Error ? error.message : String(error)}`);
+    return ""; // Return empty string on error
+  }
 }
 
-export function ensureDirectoryExists(filePath: string) {
+/**
+ * Ensures that a directory exists for a given file path
+ * @param filePath Path to the file
+ */
+export function ensureDirectoryExists(filePath: string): void {
   const dirName = path.dirname(filePath);
-  if (fs.existsSync(dirName)) {
-    return true;
+  if (!fs.existsSync(dirName)) {
+    fs.mkdirSync(dirName, { recursive: true });
   }
-  fs.mkdirSync(dirName);
 }

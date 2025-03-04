@@ -1,8 +1,8 @@
 export interface PackageData {
   name: string;
   description: string;
-  language: string;
-  projectType: string;
+  language?: string;
+  projectType?: string;
   author: {
     name: string;
     email: string;
@@ -31,7 +31,12 @@ export interface PackageData {
 export type FileConfig = {
   name: string;
   template: string;
-  data?: { name: string | symbol; description: string | symbol; licenseType?: string | symbol };
+  data?: {
+    name?: string | symbol;
+    description?: string | symbol;
+    licenseType?: string | symbol;
+    [key: string]: any;
+  };
 };
 
 export interface TelemetryConfig {
