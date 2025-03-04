@@ -1,25 +1,52 @@
-import chokidar from 'chokidar';
-import { exec } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { renderTemplate } from './fileUtils.js';
+import { PackageData } from '../types/index.js';
 
-// Function to ignore dotfiles
-const ignoreDotfiles = (path: string): boolean => {
-  return /(^|[\/\\])\../.test(path); // Regular expression to match dotfiles
-};
+/**
+ * Copy template files to the target directory, processing Handlebars templates
+ * @param sourceDir Source template directory
+ * @param targetDir Target directory for the new package
+ * @param packageData Package data for template rendering
+ */
+export async function watchCopy(
+  sourceDir: string,
+  targetDir: string,
+  packageData: PackageData
+): Promise<void> {
+  try {
+    // Read the source directory
+    const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
 
-// Watch the current project directory for duplication (copy events)
-const watcher = chokidar.watch('.', {
-  ignored: ignoreDotfiles, // Ignore dotfiles
-  persistent: true,
-});
+    // Process each entry
+    for (const entry of entries) {
+      const sourcePath = path.join(sourceDir, entry.name);
+      const targetPath = path.join(targetDir, entry.name.replace('.hbs', ''));
 
-// Detect if files are added (e.g., someone copied the directory)
-watcher.on('addDir', (path: string) => {
-  console.log(`New directory detected: ${path}`);
-  
-  // Replace 'user's name' with the actual user's name if available
-  const message = `"This project is licensed exclusively. 
-  Copying, distributing, or redistributing this project for other users or products is strictly prohibited. 
-  Violating this license agreement may result in legal consequences."`;
+      if (entry.isDirectory()) {
+        // Create the directory if it doesn't exist
+        if (!fs.existsSync(targetPath)) {
+          fs.mkdirSync(targetPath, { recursive: true });
+        }
 
-  exec(`notify-send "${message}"`);
-});
+        // Recursively copy the directory contents
+        await watchCopy(sourcePath, targetPath, packageData);
+      } else {
+        // Process the file
+        if (entry.name.endsWith('.hbs')) {
+          // Render the template
+          const content = renderTemplate(entry.name, packageData);
+          fs.writeFileSync(targetPath, content);
+        } else {
+          // Copy the file as is
+          fs.copyFileSync(sourcePath, targetPath);
+        }
+      }
+    }
+
+    console.log(`Files copied from ${sourceDir} to ${targetDir}`);
+  } catch (error) {
+    console.error('Error copying files:', error);
+    throw error;
+  }
+}

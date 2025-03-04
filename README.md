@@ -132,7 +132,7 @@ packship publish
 
 ### For Existing Packages
 
-If you’re updating an existing package, update the version and then publish:
+If you're updating an existing package, update the version and then publish:
 
 ```bash
 npm version patch/minor/major      # Depending on your release
@@ -144,6 +144,30 @@ Then:
 packship publish
 ```
 
+## Telemetry
+
+PackShip collects anonymous usage data to help improve the tool. This data includes command usage and error rates, but never includes personal information or code. You can opt out at any time by running:
+
+```bash
+packship telemetry disable
+```
+
+To check the current telemetry status:
+
+```bash
+packship telemetry status
+```
+
+To re-enable telemetry:
+
+```bash
+packship telemetry enable
+```
+
+## Contributing
+
+We welcome contributions to PackShip! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
+
 ## License
 
-This project is licensed under the ISC License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for details.
