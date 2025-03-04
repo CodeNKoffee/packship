@@ -319,7 +319,7 @@ export async function createPackage() {
       ...data,
       name: typeof data.name === "symbol" ? String(data.name) : data.name,
       description: typeof data.description === "symbol" ? String(data.description) : data.description,
-      licenseType: data.licenseType !== undefined ? (typeof data.licenseType === "symbol" ? String(data.licenseType) : data.licenseType) : licenseType
+      licenseType: (data as any).licenseType !== undefined ? (typeof (data as any).licenseType === "symbol" ? String((data as any).licenseType) : (data as any).licenseType) : licenseType
     };
 
     try {

@@ -84,7 +84,7 @@ export async function createPackage() {
     });
     let licenseType = "MIT";
     if (includeLicense) {
-        licenseType = await select({
+        const licenseSelection = await select({
             message: "What type of license would you like to include?",
             options: [
                 { value: "MIT", label: "MIT" },
@@ -94,6 +94,7 @@ export async function createPackage() {
             ],
             initialValue: "MIT"
         });
+        licenseType = String(licenseSelection);
     }
     const includeCodeOfConduct = await confirm({
         message: "Do you want to include a CODE_OF_CONDUCT.md file for community guidelines?",
@@ -108,6 +109,8 @@ export async function createPackage() {
         name: String(name),
         version: "0.1.0",
         description: String(description),
+        language: String(languageChoice),
+        projectType: String(projectType),
         main: languageChoice === "JavaScript" ? "index.js" : "dist/index.js",
         module: languageChoice === "JavaScript" ? "index.mjs" : "dist/index.mjs",
         type: typeof projectType === "string" && projectType.startsWith("node-") ? "commonjs" : "module",
@@ -120,17 +123,7 @@ export async function createPackage() {
             name: String(authorName),
             email: String(authorEmail)
         },
-        license: String(licenseType),
-        options: {
-            includeInternalDir: Boolean(includeInternalDir),
-            useWebpack: Boolean(useWebpack),
-            useEslint: Boolean(useEslint),
-            usePostcss: Boolean(usePostcss),
-            useNpmignore: Boolean(useNpmignore),
-            includeLicense: Boolean(includeLicense),
-            includeCodeOfConduct: Boolean(includeCodeOfConduct),
-            includeReadme: Boolean(includeReadme)
-        }
+        license: String(licenseType)
     };
     // Dynamically adjust package.json fields based on user choices
     if (typeof projectType === "string" && projectType.startsWith("react-")) {
@@ -161,19 +154,26 @@ export async function createPackage() {
                 "ts-loader": "^9.5.1",
                 typescript: "^4.9.5"
             };
-            packageData.scripts.build = "tsc && npm run build-babel";
+            if (packageData.scripts) {
+                packageData.scripts.build = "tsc && npm run build-babel";
+            }
         }
     }
-    if (useWebpack) {
+    if (useWebpack && packageData.scripts) {
         packageData.devDependencies = {
             ...packageData.devDependencies,
             webpack: "^5.0.0",
             "webpack-cli": "^5.1.4",
         };
         packageData.scripts["build-webpack"] = "webpack --config webpack.config.js";
-        packageData.scripts.build += " && npm run build-webpack";
+        if (packageData.scripts.build) {
+            packageData.scripts.build += " && npm run build-webpack";
+        }
+        else {
+            packageData.scripts.build = "npm run build-webpack";
+        }
     }
-    if (useEslint) {
+    if (useEslint && packageData.scripts) {
         packageData.devDependencies = {
             ...packageData.devDependencies,
             eslint: "^7.32.0",
@@ -274,7 +274,7 @@ export async function createPackage() {
             ...data,
             name: typeof data.name === "symbol" ? String(data.name) : data.name,
             description: typeof data.description === "symbol" ? String(data.description) : data.description,
-            licenseType: typeof data.licenseType === "symbol" ? String(data.licenseType) : data.licenseType
+            licenseType: data.licenseType !== undefined ? (typeof data.licenseType === "symbol" ? String(data.licenseType) : data.licenseType) : licenseType
         };
         try {
             // Render template and write to file
@@ -288,13 +288,13 @@ export async function createPackage() {
             console.log(`\x1b[32m%s\x1b[0m`, `Created: ${fileName}`);
         }
         catch (error) {
-            console.error(`\x1b[31m%s\x1b[0m`, `Error creating ${fileName}: ${error.message}`);
+            console.error(`\x1b[31m%s\x1b[0m`, `Error creating ${fileName}: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
     console.log("\n\x1b[32m%s\x1b[0m", "✅ Package setup completed successfully!");
     console.log("\x1b[36m%s\x1b[0m", `Your package is ready at: ${packageDir}`);
     console.log("\x1b[90m%s\x1b[0m", "To get started, run the following commands:");
-    console.log("\x1b[90m%s\x1b[0m", `  cd ${name}`);
+    console.log("\x1b[90m%s\x1b[0m", `  cd ${String(name)}`);
     console.log("\x1b[90m%s\x1b[0m", "  npm install");
     console.log("\x1b[90m%s\x1b[0m", "  npm run build");
     return name;
