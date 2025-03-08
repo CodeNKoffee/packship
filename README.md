@@ -154,9 +154,14 @@ If you encounter any issues with the Packship tool itself, you can report them d
 packship report
 ```
 
-This command is specifically for reporting issues with the Packship CLI tool, not for issues with your npm package. If you run this command in a package that wasn't initialized with Packship, you'll see a warning message clarifying its purpose.
+This command is specifically for reporting issues with the Packship CLI tool, not for issues with your npm package. For security and clarity, this command can only be run:
 
-When you run this command, you'll be given two options:
+1. Outside of any package directory, or
+2. Inside a package that was initialized with Packship
+
+If you try to run this command in a package that wasn't initialized with Packship, you'll see an error message and the command will exit.
+
+When you run this command in a valid context, you'll be given two options:
 
 1. **Automatic Submission** - Submit the issue directly to GitHub from the terminal (requires a GitHub token)
 2. **Manual Submission** - Get formatted issue content to copy and paste into GitHub's issue form
