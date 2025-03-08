@@ -30,6 +30,8 @@ packship init
 
 Follow the prompts, and your package will be ready!
 
+> **Note:** For the best experience, we recommend initializing your packages with `packship init`. While you can use `packship publish` with any npm package, packages initialized with Packship will have access to optimized workflows and features.
+
 ## 2. Dependency Installation
 
 ### Initialize `node modules` and `package-lock.json`
@@ -144,15 +146,17 @@ Then:
 packship publish
 ```
 
-## 4. Reporting Issues
+## 4. Reporting Issues with Packship
 
-You can report issues directly from the terminal using the report command:
+If you encounter any issues with the Packship tool itself, you can report them directly from the terminal:
 
 ```bash
 packship report
 ```
 
-This will guide you through a series of prompts to collect information about the issue. If you don't have a GitHub token set up, the command will offer you the option to enter one directly in the terminal and save it for future use.
+This command is specifically for reporting issues with the Packship CLI tool, not for issues with your npm package. It will guide you through a series of prompts to collect information about the issue with Packship.
+
+If you don't have a GitHub token set up, the command will offer you the option to enter one directly in the terminal and save it for future use.
 
 You can also set a GitHub token as an environment variable beforehand:
 

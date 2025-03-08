@@ -12,11 +12,11 @@ const GITHUB_API_URL = 'https://api.github.com/repos/CodeNKoffee/packship/issues
 
 // Issue categories
 const ISSUE_CATEGORIES = [
-  { value: 'bug', label: 'Bug Report' },
-  { value: 'feature', label: 'Feature Request' },
-  { value: 'documentation', label: 'Documentation Issue' },
-  { value: 'question', label: 'Question' },
-  { value: 'other', label: 'Other' }
+  { value: 'bug', label: 'Bug Report - Packship Tool' },
+  { value: 'feature', label: 'Feature Request for Packship' },
+  { value: 'documentation', label: 'Documentation Issue with Packship' },
+  { value: 'question', label: 'Question about Packship' },
+  { value: 'other', label: 'Other Packship-related Issue' }
 ];
 
 /**
@@ -104,8 +104,8 @@ async function promptForGitHubToken(): Promise<string | null> {
  * Submit an issue to GitHub directly from the CLI
  */
 export async function submitIssue(): Promise<void> {
-  console.log(`\n${MESSAGE.HEADER('📝 Report an Issue')}`);
-  console.log(MESSAGE.HIGHLIGHT('This will help us improve PackShip by submitting an issue to our GitHub repository.'));
+  console.log(`\n${MESSAGE.HEADER('📝 Report an Issue with Packship')}`);
+  console.log(MESSAGE.HIGHLIGHT('This will help us improve the Packship tool by submitting an issue to our GitHub repository.'));
   console.log(MESSAGE.MUTED('No personal information will be collected other than what you provide.'));
 
   // Select issue category

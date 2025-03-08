@@ -26,6 +26,7 @@ export interface PackageData {
   bugs?: {
     url: string;
   };
+  _packshipInitialized?: boolean;
 }
 
 export type FileConfig = {
