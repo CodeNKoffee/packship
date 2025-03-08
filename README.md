@@ -152,13 +152,15 @@ You can report issues directly from the terminal using the report command:
 packship report
 ```
 
-This will guide you through a series of prompts to collect information about the issue. Currently, the automatic submission from the terminal is in development, so the command will show you steps for the manual submission process.
+This will guide you through a series of prompts to collect information about the issue. If you don't have a GitHub token set up, the command will offer you the option to enter one directly in the terminal and save it for future use.
 
-To enable direct submission from the terminal (when available), you'll need to set a GitHub token as an environment variable:
+You can also set a GitHub token as an environment variable beforehand:
 
 ```bash
 export GITHUB_TOKEN=your_github_token
 ```
+
+If you choose not to provide a token, the command will show you steps for manual submission with pre-formatted content.
 
 ## Telemetry
 
