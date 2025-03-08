@@ -2,7 +2,7 @@ import axios from 'axios';
 import { text, select, confirm, isCancel } from '@clack/prompts';
 import { getVersion } from '../commands/version.js';
 import os from 'os';
-import { COLORS, MESSAGE } from './colors.js';
+import { COLORS, MESSAGE, printFormatted, printSection } from './colors.js';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -35,9 +35,11 @@ const SUBMISSION_METHODS = [
  * Prompt user to enter their GitHub token and save it to .env file
  */
 async function promptForGitHubToken(): Promise<string | null> {
-  console.log(MESSAGE.INFO('To submit issues directly from the CLI, you need a GitHub Personal Access Token.'));
-  console.log(MESSAGE.MUTED('You can create one at: ') + MESSAGE.LINK('https://github.com/settings/tokens'));
-  console.log(MESSAGE.MUTED('The token needs "repo" scope to create issues.'));
+  printFormatted([
+    MESSAGE.INFO('To submit issues directly from the CLI, you need a GitHub Personal Access Token.'),
+    MESSAGE.MUTED('You can create one at: ') + MESSAGE.LINK('https://github.com/settings/tokens'),
+    MESSAGE.MUTED('The token needs "repo" scope to create issues.')
+  ]);
 
   const token = await text({
     message: 'Enter your GitHub token:',
@@ -94,9 +96,11 @@ async function promptForGitHubToken(): Promise<string | null> {
       // Reload .env file
       dotenv.config();
     } catch (error) {
-      console.error(MESSAGE.ERROR('Failed to save token to .env file:'), error);
-      console.log(MESSAGE.INFO('You can manually add it to your .env file:'));
-      console.log(MESSAGE.HIGHLIGHT(`GITHUB_TOKEN=${token}`));
+      printFormatted([
+        MESSAGE.ERROR('Failed to save token to .env file:') + ' ' + error,
+        MESSAGE.INFO('You can manually add it to your .env file:'),
+        MESSAGE.HIGHLIGHT(`GITHUB_TOKEN=${token}`)
+      ]);
     }
   }
 
@@ -107,25 +111,31 @@ async function promptForGitHubToken(): Promise<string | null> {
  * Display manual submission instructions with formatted issue content
  */
 function showManualSubmissionInstructions(category: string, title: string, body: string): void {
-  console.log(`\nYou can submit your issue manually at:`);
-  console.log(MESSAGE.LINK('https://github.com/CodeNKoffee/packship/issues/new'));
+  printFormatted([
+    `You can submit your issue manually at:`,
+    MESSAGE.LINK('https://github.com/CodeNKoffee/packship/issues/new')
+  ], { startWithNewLine: true });
 
   // Format the issue for manual submission
   const divider = `${COLORS.CYAN}--- Copy the content below for manual submission ---${COLORS.RESET}`;
-  console.log(`\n${divider}`);
-  console.log(MESSAGE.HIGHLIGHT(`Title: [${String(category)}] ${String(title)}`));
-  console.log(`\n${MESSAGE.HIGHLIGHT('Body:')}`);
-  console.log(body);
-  console.log(`${COLORS.CYAN}--- End of issue content ---${COLORS.RESET}\n`);
+
+  printFormatted([
+    divider,
+    MESSAGE.HIGHLIGHT(`Title: [${String(category)}] ${String(title)}`),
+    MESSAGE.HIGHLIGHT('Body:'),
+    body,
+    `${COLORS.CYAN}--- End of issue content ---${COLORS.RESET}`
+  ], { startWithNewLine: true, endWithNewLine: true });
 }
 
 /**
  * Submit an issue to GitHub directly from the CLI
  */
 export async function submitIssue(): Promise<void> {
-  console.log(`\n${MESSAGE.HEADER('📝 Report an Issue with Packship')}`);
-  console.log(MESSAGE.HIGHLIGHT('This will help us improve the Packship tool by submitting an issue to our GitHub repository.'));
-  console.log(MESSAGE.MUTED('No personal information will be collected other than what you provide.'));
+  printSection('📝 Report an Issue with Packship', [
+    MESSAGE.HIGHLIGHT('This will help us improve the Packship tool by submitting an issue to our GitHub repository.'),
+    MESSAGE.MUTED('No personal information will be collected other than what you provide.')
+  ], { startWithNewLine: true });
 
   // Choose submission method
   const submissionMethod = await select({
@@ -218,14 +228,14 @@ export async function submitIssue(): Promise<void> {
   }
 
   try {
-    console.log(`\n${MESSAGE.INFO('Submitting your issue...')}`);
+    printFormatted([MESSAGE.INFO('Submitting your issue...')], { startWithNewLine: true });
 
     // Check if user has a GitHub token set
     let githubToken = process.env.GITHUB_TOKEN;
 
     // If no token is found, prompt user to enter one
     if (!githubToken) {
-      console.log(`\n${MESSAGE.WARNING('⚠️  No GitHub token found.')}`);
+      printFormatted([MESSAGE.WARNING('⚠️  No GitHub token found.')], { startWithNewLine: true });
       const promptedToken = await promptForGitHubToken();
       if (promptedToken) {
         githubToken = promptedToken;
@@ -234,7 +244,7 @@ export async function submitIssue(): Promise<void> {
 
     // If still no token (user declined to enter one), show manual submission instructions
     if (!githubToken) {
-      console.log(MESSAGE.WARNING('Cannot proceed with automatic submission without a GitHub token.'));
+      printFormatted([MESSAGE.WARNING('Cannot proceed with automatic submission without a GitHub token.')]);
       showManualSubmissionInstructions(String(category), String(title), body);
       return;
     }
@@ -256,22 +266,28 @@ export async function submitIssue(): Promise<void> {
     );
 
     if (response.status === 201) {
-      console.log(`\n${MESSAGE.SUCCESS('✅ Issue successfully created:')} ${MESSAGE.LINK(response.data.html_url)}`);
+      printFormatted([
+        MESSAGE.SUCCESS('✅ Issue successfully created:') + ' ' + MESSAGE.LINK(response.data.html_url)
+      ], { startWithNewLine: true });
       // No telemetry tracking for successful issue creation
     } else {
       throw new Error(`Unexpected response: ${response.status}`);
     }
   } catch (error) {
-    console.error(`\n${MESSAGE.ERROR('❌ Failed to create issue:')} ${error instanceof Error ? error.message : 'Unknown error'}`);
+    printFormatted([
+      MESSAGE.ERROR('❌ Failed to create issue:') + ' ' + (error instanceof Error ? error.message : 'Unknown error')
+    ], { startWithNewLine: true });
 
     // If the error is related to authentication, suggest checking the token
     if (error instanceof Error && error.message.includes('401')) {
-      console.log(MESSAGE.WARNING('This might be due to an invalid GitHub token. Please check your token and try again.'));
-      console.log(MESSAGE.INFO('You can generate a new token at: ') + MESSAGE.LINK('https://github.com/settings/tokens'));
+      printFormatted([
+        MESSAGE.WARNING('This might be due to an invalid GitHub token. Please check your token and try again.'),
+        MESSAGE.INFO('You can generate a new token at: ') + MESSAGE.LINK('https://github.com/settings/tokens')
+      ]);
     }
 
     // Show manual submission as a fallback
-    console.log(`\n${MESSAGE.INFO('You can still submit your issue manually:')}`);
+    printFormatted([MESSAGE.INFO('You can still submit your issue manually:')], { startWithNewLine: true });
     showManualSubmissionInstructions(String(category), String(title), body);
 
     // No telemetry tracking for failed issue creation

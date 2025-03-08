@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { MESSAGE } from './colors.js';
+import { MESSAGE, printFormatted } from './colors.js';
 
 /**
  * Check if the current package was initialized with Packship
@@ -50,9 +50,10 @@ export function validatePackshipPackage(): {
  * Display a warning if the package wasn't initialized with Packship
  */
 export function showNonPackshipWarning(): void {
-  console.log(MESSAGE.WARNING('⚠️  This package was not initialized with Packship.\n'));
-  console.log(MESSAGE.INFO('For the best experience, we recommend initializing your packages with:\n'));
-  console.log(MESSAGE.HIGHLIGHT('  packship init\n'));
-  console.log(MESSAGE.INFO('However, we\'ll proceed with your request anyway.\n'));
-  console.log('');
+  printFormatted([
+    MESSAGE.WARNING('⚠️  This package was not initialized with Packship.'),
+    MESSAGE.INFO('For the best experience, we recommend initializing your packages with:'),
+    MESSAGE.HIGHLIGHT('  packship init'),
+    MESSAGE.INFO('However, we\'ll proceed with your request anyway.')
+  ], { startWithNewLine: true, endWithNewLine: true });
 } 

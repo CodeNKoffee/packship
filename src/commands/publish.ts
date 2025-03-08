@@ -5,7 +5,7 @@ import { exec } from "child_process";
 import { Command } from "commander";
 import readline from 'readline';
 import { sendTelemetryEvent } from "../utils/telemetry.js";
-import { MESSAGE, COLORS } from "../utils/colors.js";
+import { MESSAGE, COLORS, printFormatted } from "../utils/colors.js";
 import { validatePackshipPackage, showNonPackshipWarning } from "../utils/packageValidator.js";
 
 const publishCommand = new Command("publish");
@@ -165,14 +165,18 @@ async function executeNpmPublish() {
 // Main publish function
 export async function publishPackage() {
   try {
-    console.log(MESSAGE.HEADER('Starting package publication process...'));
+    printFormatted([
+      MESSAGE.HEADER('Starting package publication process...')
+    ], { startWithNewLine: true });
 
     // Check if the package was initialized with Packship
     const { isPackshipPackage, packageJsonExists } = validatePackshipPackage();
 
     if (!packageJsonExists) {
-      console.error(MESSAGE.ERROR('Error: package.json not found in the current directory.'));
-      console.log(MESSAGE.INFO('Make sure you are in the root directory of your package.'));
+      printFormatted([
+        MESSAGE.ERROR('Error: package.json not found in the current directory.'),
+        MESSAGE.INFO('Make sure you are in the root directory of your package.')
+      ], { startWithNewLine: true });
       process.exit(1);
     }
 
