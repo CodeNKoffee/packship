@@ -30,6 +30,8 @@ packship init
 
 Follow the prompts, and your package will be ready!
 
+> **Note:** For the best experience, we recommend initializing your packages with `packship init`. While you can use `packship publish` with any npm package, packages initialized with Packship will have access to optimized workflows and features.
+
 ## 2. Dependency Installation
 
 ### Initialize `node modules` and `package-lock.json`
@@ -132,7 +134,7 @@ packship publish
 
 ### For Existing Packages
 
-If you’re updating an existing package, update the version and then publish:
+If you're updating an existing package, update the version and then publish:
 
 ```bash
 npm version patch/minor/major      # Depending on your release
@@ -144,6 +146,60 @@ Then:
 packship publish
 ```
 
+## 4. Reporting Issues with Packship
+
+If you encounter any issues with the Packship tool itself, you can report them directly from the terminal:
+
+```bash
+packship report
+```
+
+This command is specifically for reporting issues with the Packship CLI tool, not for issues with your npm package. For security and clarity, this command can only be run:
+
+1. Outside of any package directory, or
+2. Inside a package that was initialized with Packship
+
+If you try to run this command in a package that wasn't initialized with Packship, you'll see an error message and the command will exit.
+
+When you run this command in a valid context, you'll be given two options:
+
+1. **Automatic Submission** - Submit the issue directly to GitHub from the terminal (requires a GitHub token)
+2. **Manual Submission** - Get formatted issue content to copy and paste into GitHub's issue form
+
+If you choose automatic submission and don't have a GitHub token set up, you'll be prompted to enter one. You can also set a GitHub token as an environment variable beforehand:
+
+```bash
+export GITHUB_TOKEN=your_github_token
+```
+
+The tool will guide you through collecting all necessary information about the issue, including optional system information to help with troubleshooting.
+
+## Telemetry
+
+PackShip collects anonymous usage data to help improve the tool. This data includes command usage and error rates, but never includes personal information or code. You can opt out at any time by running:
+
+```bash
+packship telemetry disable
+```
+
+To check the current telemetry status:
+
+```bash
+packship telemetry status
+```
+
+To re-enable telemetry:
+
+```bash
+packship telemetry enable
+```
+
+The telemetry system only tracks essential commands like `packship init` and `packship publish` to conserve tracking resources.
+
+## Contributing
+
+We welcome contributions to PackShip! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
+
 ## License
 
-This project is licensed under the ISC License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for details.

@@ -4,6 +4,9 @@ import * as path from "path";
 import { exec } from "child_process";
 import { Command } from "commander";
 import readline from 'readline';
+import { sendTelemetryEvent } from "../utils/telemetry.js";
+import { MESSAGE, COLORS, printFormatted } from "../utils/colors.js";
+import { validatePackshipPackage, showNonPackshipWarning } from "../utils/packageValidator.js";
 
 const publishCommand = new Command("publish");
 
@@ -21,17 +24,17 @@ function debugStringify(obj: any): string {
 }
 
 // Function to parse author string into email
-function extractAuthorEmail(author: string | {email?: string, name?: string} | undefined): string {
+function extractAuthorEmail(author: string | { email?: string, name?: string } | undefined): string {
   // Debug log the incoming author data
   if (process.env.NODE_ENV === "development") {
     console.log('\nAuthor data received:', debugStringify(author));
   }
-  
+
   if (!author) {
     console.log('Author is undefined or null');
     return "UNKNOWN";
   }
-  
+
   // If author is an object with email property
   if (typeof author === 'object') {
     if (process.env.NODE_ENV === "development") {
@@ -48,104 +51,74 @@ function extractAuthorEmail(author: string | {email?: string, name?: string} | u
     }
     return "UNKNOWN";
   }
-  
-  // If author is a string in the format "Name <email>"
-  if (typeof author === 'string') {
-    if (process.env.NODE_ENV === "development") {
-      console.log('Author is a string:', author);
-    }
-    const emailMatch = author.match(/<(.+)>/);
-    if (emailMatch) {
-      return emailMatch[1];
-    }
-    // If no email format found in string
-    if (process.env.NODE_ENV === "development") {
-      console.log('No email format found in author string');
-    }
-    return author;
+
+  // If author is a string, try to extract email
+  const emailMatch = author.match(/<([^>]+)>/);
+  if (emailMatch && emailMatch[1]) {
+    return emailMatch[1];
   }
-  
+
+  // If no email found in string
   if (process.env.NODE_ENV === "development") {
-    console.log('Author is of unexpected type:', typeof author);
+    console.log('No email found in author string:', author);
   }
   return "UNKNOWN";
 }
 
-// Function to get project data from package.json or .packshiprc
+// Get local project data from package.json
 function getLocalProjectData() {
-  const packageJsonPath = path.join(process.cwd(), "package.json");
-  
-  if (fs.existsSync(packageJsonPath)) {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-    if (process.env.NODE_ENV === "development") {
-      console.log('\nPackage.json data:', {
-        name: packageJson.name,
-        author: packageJson.author,
-        serialNumber: packageJson.serialNumber || "UNKNOWN"
-      });
+  try {
+    const packageJsonPath = path.join(process.cwd(), 'package.json');
+    if (!fs.existsSync(packageJsonPath)) {
+      console.error(MESSAGE.ERROR('Error: package.json not found in the current directory.'));
+      process.exit(1);
     }
-    
+
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     return {
-      serialNumber: packageJson.serialNumber || "UNKNOWN",  
-      author: extractAuthorEmail(packageJson.author),
-      packageName: packageJson.name,
+      name: packageJson.name,
+      version: packageJson.version,
+      author: packageJson.author
     };
-  } else {
-    throw new Error("package.json not found. Ensure you are in the correct project directory.");
+  } catch (error) {
+    console.error(MESSAGE.ERROR('Error reading package.json:'), error);
+    process.exit(1);
   }
 }
 
-// Function to check the npm registry for existing package data
+// Check if package exists on npm registry
 async function checkNpmRegistry(packageName: string) {
-  const url = `https://registry.npmjs.org/${packageName}`;
   try {
-    const response = await axios.get(url);
-    if (process.env.NODE_ENV === "development") {
-      console.log('\nNPM Registry response for latest version:', {
-        author: response.data.author,
-        maintainers: response.data.maintainers,
-        'dist-tags': response.data['dist-tags'],
-      });
-    }
-    
-    // Get the latest version data
-    const latestVersion = response.data['dist-tags']?.latest;
-    const latestVersionData = response.data.versions?.[latestVersion];
-  
-    if (process.env.NODE_ENV === "development") {
-      console.log('\nLatest version data:', {
-        version: latestVersion,
-        author: latestVersionData?.author,
-        maintainers: latestVersionData?.maintainers
-      });
-    }
-    
-    return response.data;
+    const response = await axios.get(`https://registry.npmjs.org/${packageName}`);
+    return { exists: true, data: response.data };
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
-      console.log('\nPackage not found in npm registry');
-      return null;
+      return { exists: false };
     }
-    console.error('\nError fetching from npm registry:', error);
-    return null;
+    console.error(MESSAGE.ERROR('Error checking npm registry:'), error);
+    return { exists: false, error };
   }
 }
 
+// Check if 2FA is enabled for npm
 function is2FAEnabled(): Promise<boolean> {
   return new Promise((resolve) => {
-    exec('npm profile get --json', (error, stdout, stderr) => {
+    exec('npm profile get', (error, stdout) => {
       if (error) {
-        console.error(`Error checking 2FA status: ${error}`);
+        console.log(MESSAGE.ERROR('Error checking 2FA status:'), error);
         resolve(false);
-      } else {
-        const profile = JSON.parse(stdout);
-        resolve(profile.tfa && profile.tfa.mode !== 'disabled');
+        return;
       }
+
+      const twoFactorAuthMatch = stdout.match(/two-factor auth: (.+)/i);
+      const is2FA = twoFactorAuthMatch && twoFactorAuthMatch[1].trim().toLowerCase() !== 'disabled';
+
+      resolve(is2FA || false);
     });
   });
 }
 
-// Function to get OTP from user
+// Get OTP from user if 2FA is enabled
 function getOTP(): Promise<string> {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -153,103 +126,111 @@ function getOTP(): Promise<string> {
   });
 
   return new Promise((resolve) => {
-    rl.question('Enter your NPM One-Time Password (OTP): ', (otp) => {
+    rl.question(`Enter your npm one-time password (OTP): ${COLORS.BRIGHT}`, (otp) => {
+      process.stdout.write(COLORS.RESET); // Reset color after input
       rl.close();
-      resolve(otp);
+      resolve(otp.trim());
     });
   });
 }
 
-// Function to execute npm publish with OTP
+// Execute npm publish command
 async function executeNpmPublish() {
-  const twoFAEnabled = await is2FAEnabled();
+  const is2FA = await is2FAEnabled();
   let publishCommand = 'npm publish';
-  
-  if (twoFAEnabled) {
+
+  if (is2FA) {
+    console.log(MESSAGE.INFO('Two-factor authentication is enabled for your npm account.'));
     const otp = await getOTP();
     publishCommand += ` --otp=${otp}`;
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
+    console.log(MESSAGE.INFO(`Executing: ${publishCommand}`));
+
     exec(publishCommand, (error, stdout, stderr) => {
       if (error) {
-        reject(`Error during npm publish: ${stderr}`);
-      } else {
-        resolve(`Publish successful: ${stdout}`);
+        console.error(MESSAGE.ERROR('Error publishing package:'), stderr || error.message);
+        reject(error);
+        return;
       }
+
+      console.log(stdout);
+      console.log(MESSAGE.SUCCESS('Package published successfully!'));
+      resolve();
     });
   });
 }
 
-// Main function to handle package publishing
+// Main publish function
 export async function publishPackage() {
   try {
-    console.log('\n=== Starting Package Publication Process ===');
-    const localData = getLocalProjectData();
-    if (process.env.NODE_ENV === "development") {
-      console.log('\nLocal project data:', debugStringify(localData));
-    }
-    
-    const registryData = await checkNpmRegistry(localData.packageName);
-    
-    if (!localData.serialNumber) {
-      console.error("\nSerial number missing from package.json. Run `packship init` to initialize your package, or restore the serial number if it was removed.");
+    printFormatted([
+      MESSAGE.HEADER('Starting package publication process...')
+    ], { startWithNewLine: true });
+
+    // Check if the package was initialized with Packship
+    const { isPackshipPackage, packageJsonExists } = validatePackshipPackage();
+
+    if (!packageJsonExists) {
+      printFormatted([
+        MESSAGE.ERROR('Error: package.json not found in the current directory.'),
+        MESSAGE.INFO('Make sure you are in the root directory of your package.')
+      ], { startWithNewLine: true });
       process.exit(1);
     }
 
-    if (!registryData) {
-      console.log("\nPackage does not exist on npm yet. Proceeding to publish...");
-      try {
-        const result = await executeNpmPublish();
-        console.log("\n\x1b[32m%s\x1b[0m", result);
-      } catch (error) {
-        console.error(`Error during npm publish: ${error}`);
-      }
-    } else {
-      // Try to get author from multiple possible locations in the registry data
-      let registryAuthor = extractAuthorEmail(registryData.author);
-      
-      // If author is not found in root, try latest version
-      if (registryAuthor === "UNKNOWN") {
-        const latestVersion = registryData['dist-tags']?.latest;
-        const latestVersionData = registryData.versions?.[latestVersion];
-        if (latestVersionData?.author) {
-          registryAuthor = extractAuthorEmail(latestVersionData.author);
-        }
-      }
-      
-      const localAuthor = localData.author;
-
-      if (process.env.NODE_ENV === "development") {
-        console.log('\n=== Author Comparison ===');
-        console.log('Registry Author:', registryAuthor);
-        console.log('Local Author:', localAuthor);
-        console.log('Match Status:', registryAuthor === localAuthor ? 'MATCH' : 'NO MATCH');
-      }
-
-      // If registry author is UNKNOWN, allow publication
-      if (registryAuthor === "UNKNOWN" || registryAuthor === localAuthor) {
-        console.log("\n\x1b[32m%s\x1b[0m", "Package is valid and can be published.");
-        try {
-          const result = await executeNpmPublish();
-          console.log("\n\x1b[32m%s\x1b[0m", result);
-        } catch (error) {
-          console.error(`Error during npm publish: ${error}`);
-        }
-      } else {
-        console.error("\nAuthor mismatch detected:");
-        if (process.env.NODE_ENV === "development") {
-          console.error(`Registry author: ${registryAuthor}`);
-          console.error(`Local author: ${localAuthor}`);
-        }
-        console.error("\nCannot publish. To resolve this:");
-        console.error("1. Ensure your package.json author email matches the npm registry");
-        console.error("2. Verify you are logged in with the correct npm account");
-        console.error("3. Check if you are listed as a maintainer of the package");
-      }
+    if (!isPackshipPackage) {
+      showNonPackshipWarning();
     }
+
+    // Get local project data
+    const projectData = getLocalProjectData();
+    const { name, version, author } = projectData;
+
+    if (!name || !version) {
+      console.error(MESSAGE.ERROR('Error: Package name or version not found in package.json'));
+      process.exit(1);
+    }
+
+    console.log(MESSAGE.INFO(`Publishing package: ${MESSAGE.HIGHLIGHT(name)}@${MESSAGE.HIGHLIGHT(version)}`));
+
+    // Check if package already exists on npm
+    const npmCheck = await checkNpmRegistry(name);
+
+    if (npmCheck.exists && npmCheck.data?.versions?.[version]) {
+      console.error(MESSAGE.ERROR(`Error: Version ${version} already exists on npm. Please update your version number.`));
+      process.exit(1);
+    }
+
+    // Execute npm publish
+    await executeNpmPublish();
+
+    // Send telemetry event for successful publish
+    await sendTelemetryEvent({
+      type: 'publish',
+      name: 'package_published',
+      data: {
+        success: true,
+        packageName: name,
+        packageVersion: version
+      }
+    });
+
+    console.log(`\n${MESSAGE.SUCCESS(`🎉 Successfully published ${name}@${version} to npm!`)}`);
   } catch (error) {
-    console.error(`Error: ${error}`);
+    // Send telemetry event for failed publish
+    await sendTelemetryEvent({
+      type: 'publish',
+      name: 'package_publish_failed',
+      data: {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      }
+    });
+
+    console.error(MESSAGE.ERROR('Failed to publish package:'), error);
+    process.exit(1);
   }
 }
 

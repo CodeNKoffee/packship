@@ -1,6 +1,6 @@
 {
   "name": "packship",
-  "version": "0.1.57",
+  "version": "0.1.58",
   "description": "CLI to help ship npm packages faster",
   "main": "dist/index.js",
   "bin": {
@@ -26,7 +26,7 @@
     "packship"
   ],
   "author": "Hatem Soliman",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.9.1",
     "@types/inquirer": "^9.0.7",
@@ -51,7 +51,6 @@
     "chokidar": "^4.0.0",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
-    "firebase": "^10.13.1",
     "handlebars": "^4.7.8",
     "inquirer": "^10.1.8",
     "liftoff": "^5.0.0"

@@ -1,22 +1,24 @@
 export interface PackageData {
   name: string;
-  version: string;
   description: string;
-  email: string;
-  main: string;
-  module: string;
-  type: string;
-  scripts: { [key: string]: string };
-  keywords: string[];
-  author: string;
-  serialNumber: string;
+  language?: string;
+  projectType?: string;
+  author: {
+    name: string;
+    email: string;
+  };
   license: string;
+  version?: string;
+  main?: string;
+  module?: string;
+  type?: string;
+  scripts?: { [key: string]: string };
+  keywords?: string[];
   peerDependencies?: { [key: string]: string };
   devDependencies?: { [key: string]: string };
   dependencies?: { [key: string]: string };
   files?: string[];
   homepage?: string;
-  signature?: string;
   repository?: {
     type: string;
     url: string;
@@ -24,22 +26,27 @@ export interface PackageData {
   bugs?: {
     url: string;
   };
+  _packshipInitialized?: boolean;
 }
 
 export type FileConfig = {
   name: string;
   template: string;
-  data?: { name: string | symbol; description: string | symbol; licenseType?: string | symbol };
+  data?: {
+    name?: string | symbol;
+    description?: string | symbol;
+    licenseType?: string | symbol;
+    [key: string]: any;
+  };
 };
 
-export interface PackageSignature {
-  packageData: PackageData;
-  privateKeyPath?: string;
-  publicKeyPath?: string;
-  publicKey?: string;
+export interface TelemetryConfig {
+  enabled: boolean;
+  userId: string;
 }
 
-export interface KeyPairPaths {
-  publicKeyPath: string;
-  privateKeyPath: string;
+export interface TelemetryEvent {
+  type: 'init' | 'publish' | 'other' | 'issue';
+  name: string;
+  data?: Record<string, any>;
 }
