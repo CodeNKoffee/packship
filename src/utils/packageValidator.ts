@@ -50,9 +50,9 @@ export function validatePackshipPackage(): {
  * Display a warning if the package wasn't initialized with Packship
  */
 export function showNonPackshipWarning(): void {
-  console.log(MESSAGE.WARNING('⚠️  This package was not initialized with Packship.'));
-  console.log(MESSAGE.INFO('For the best experience, we recommend initializing your packages with:'));
-  console.log(MESSAGE.HIGHLIGHT('  packship init'));
-  console.log(MESSAGE.INFO('However, we\'ll proceed with your request anyway.'));
+  console.log(MESSAGE.WARNING('⚠️  This package was not initialized with Packship.\n'));
+  console.log(MESSAGE.INFO('For the best experience, we recommend initializing your packages with:\n'));
+  console.log(MESSAGE.HIGHLIGHT('  packship init\n'));
+  console.log(MESSAGE.INFO('However, we\'ll proceed with your request anyway.\n'));
   console.log('');
 } 

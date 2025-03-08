@@ -13,7 +13,7 @@ reportCommand
       const { packageJsonExists, isPackshipPackage } = validatePackshipPackage();
 
       if (packageJsonExists && !isPackshipPackage) {
-        console.log(MESSAGE.WARNING('⚠️  This package was not initialized with Packship.'));
+        console.log(MESSAGE.WARNING('⚠️  This package was not initialized with Packship.\n'));
         console.log(MESSAGE.INFO('The `packship report` command is specifically for reporting issues with the Packship tool itself,'));
         console.log(MESSAGE.INFO('not for issues with your npm package.'));
         console.log('');
