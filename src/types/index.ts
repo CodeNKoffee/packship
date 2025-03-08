@@ -45,7 +45,7 @@ export interface TelemetryConfig {
 }
 
 export interface TelemetryEvent {
-  type: 'init' | 'publish' | 'other';
+  type: 'init' | 'publish' | 'other' | 'issue';
   name: string;
   data?: Record<string, any>;
 }

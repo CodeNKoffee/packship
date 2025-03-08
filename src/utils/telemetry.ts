@@ -4,10 +4,12 @@ import path from 'path';
 import os from 'os';
 import { confirm } from '@clack/prompts';
 import { TelemetryConfig, TelemetryEvent } from '../types';
+import { MESSAGE } from './colors.js';
 
-// Default Umami endpoint - users can override this with their own
+// Umami configuration from environment variables
 const UMAMI_ENDPOINT = process.env.UMAMI_ENDPOINT || 'https://analytics.umami.is/api/collect';
-const UMAMI_WEBSITE_ID = process.env.UMAMI_WEBSITE_ID || 'packship-cli';
+const UMAMI_WEBSITE_ID = process.env.UMAMI_WEBSITE_ID;
+const UMAMI_API_KEY = process.env.UMAMI_API_KEY;
 const CONFIG_FILE = path.join(os.homedir(), '.packship', 'config.json');
 
 // Ensure the config directory exists
@@ -79,10 +81,10 @@ export async function askForTelemetryConsent(): Promise<boolean> {
     return config.enabled;
   }
 
-  console.log('\n📊 Telemetry');
-  console.log('PackShip collects anonymous usage data to help improve the tool.');
-  console.log('This data includes command usage and error rates, but never includes personal information or code.');
-  console.log('You can opt out at any time by running: packship telemetry disable');
+  console.log(`\n${MESSAGE.HEADER('📊 Telemetry')}`);
+  console.log(MESSAGE.INFO('PackShip collects anonymous usage data to help improve the tool.'));
+  console.log(MESSAGE.MUTED('This data includes command usage and error rates, but never includes personal information or code.'));
+  console.log(`You can opt out at any time by running: ${MESSAGE.HIGHLIGHT('packship telemetry disable')}`);
 
   const consent = await confirm({
     message: 'Do you want to enable anonymous telemetry?',
@@ -102,8 +104,8 @@ export async function askForTelemetryConsent(): Promise<boolean> {
 export async function sendTelemetryEvent(event: TelemetryEvent): Promise<void> {
   const config = loadTelemetryConfig();
 
-  // Don't send telemetry if it's disabled
-  if (!config.enabled) {
+  // Don't send telemetry if it's disabled or if website ID is not configured
+  if (!config.enabled || !UMAMI_WEBSITE_ID) {
     return;
   }
 
@@ -123,11 +125,18 @@ export async function sendTelemetryEvent(event: TelemetryEvent): Promise<void> {
       }
     };
 
+    // Add API key to headers if available
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'User-Agent': `PackShip CLI/${process.env.npm_package_version || 'unknown'}`
+    };
+
+    if (UMAMI_API_KEY) {
+      headers['Authorization'] = `Bearer ${UMAMI_API_KEY}`;
+    }
+
     await axios.post(UMAMI_ENDPOINT, payload, {
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': `PackShip CLI/${process.env.npm_package_version || 'unknown'}`
-      },
+      headers,
       timeout: 3000 // 3 second timeout to avoid hanging the CLI
     }).catch(() => {
       // Silently fail on telemetry errors - don't disrupt the user
@@ -142,7 +151,7 @@ export function disableTelemetry(): void {
   const config = loadTelemetryConfig();
   config.enabled = false;
   saveTelemetryConfig(config);
-  console.log('Telemetry has been disabled.');
+  console.log(MESSAGE.WARNING('Telemetry has been disabled.'));
 }
 
 // Enable telemetry
@@ -150,7 +159,7 @@ export function enableTelemetry(): void {
   const config = loadTelemetryConfig();
   config.enabled = true;
   saveTelemetryConfig(config);
-  console.log('Telemetry has been enabled.');
+  console.log(MESSAGE.SUCCESS('Telemetry has been enabled.'));
 }
 
 // Get current telemetry status

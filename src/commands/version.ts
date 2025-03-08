@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { MESSAGE } from "../utils/colors.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,7 +19,7 @@ const versionCommand = new Command("version");
 versionCommand
   .description("Display the current version of packship")
   .action(() => {
-    console.log(`\npackship v${getVersion()}`);
+    console.log(`\n${MESSAGE.HEADER(`packship v${getVersion()}`)}`);
   });
 
 export default versionCommand;

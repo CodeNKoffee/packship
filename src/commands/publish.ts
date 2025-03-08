@@ -5,6 +5,7 @@ import { exec } from "child_process";
 import { Command } from "commander";
 import readline from 'readline';
 import { sendTelemetryEvent } from "../utils/telemetry.js";
+import { MESSAGE, COLORS } from "../utils/colors.js";
 
 const publishCommand = new Command("publish");
 
@@ -68,7 +69,7 @@ function getLocalProjectData() {
   try {
     const packageJsonPath = path.join(process.cwd(), 'package.json');
     if (!fs.existsSync(packageJsonPath)) {
-      console.error('Error: package.json not found in the current directory.');
+      console.error(MESSAGE.ERROR('Error: package.json not found in the current directory.'));
       process.exit(1);
     }
 
@@ -79,7 +80,7 @@ function getLocalProjectData() {
       author: packageJson.author
     };
   } catch (error) {
-    console.error('Error reading package.json:', error);
+    console.error(MESSAGE.ERROR('Error reading package.json:'), error);
     process.exit(1);
   }
 }
@@ -93,7 +94,7 @@ async function checkNpmRegistry(packageName: string) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
       return { exists: false };
     }
-    console.error('Error checking npm registry:', error);
+    console.error(MESSAGE.ERROR('Error checking npm registry:'), error);
     return { exists: false, error };
   }
 }
@@ -103,7 +104,7 @@ function is2FAEnabled(): Promise<boolean> {
   return new Promise((resolve) => {
     exec('npm profile get', (error, stdout) => {
       if (error) {
-        console.log('Error checking 2FA status:', error);
+        console.log(MESSAGE.ERROR('Error checking 2FA status:'), error);
         resolve(false);
         return;
       }
@@ -124,7 +125,8 @@ function getOTP(): Promise<string> {
   });
 
   return new Promise((resolve) => {
-    rl.question('Enter your npm one-time password (OTP): ', (otp) => {
+    rl.question(`Enter your npm one-time password (OTP): ${COLORS.BRIGHT}`, (otp) => {
+      process.stdout.write(COLORS.RESET); // Reset color after input
       rl.close();
       resolve(otp.trim());
     });
@@ -137,23 +139,23 @@ async function executeNpmPublish() {
   let publishCommand = 'npm publish';
 
   if (is2FA) {
-    console.log('Two-factor authentication is enabled for your npm account.');
+    console.log(MESSAGE.INFO('Two-factor authentication is enabled for your npm account.'));
     const otp = await getOTP();
     publishCommand += ` --otp=${otp}`;
   }
 
   return new Promise<void>((resolve, reject) => {
-    console.log(`Executing: ${publishCommand}`);
+    console.log(MESSAGE.INFO(`Executing: ${publishCommand}`));
 
     exec(publishCommand, (error, stdout, stderr) => {
       if (error) {
-        console.error('Error publishing package:', stderr || error.message);
+        console.error(MESSAGE.ERROR('Error publishing package:'), stderr || error.message);
         reject(error);
         return;
       }
 
       console.log(stdout);
-      console.log('Package published successfully!');
+      console.log(MESSAGE.SUCCESS('Package published successfully!'));
       resolve();
     });
   });
@@ -162,24 +164,24 @@ async function executeNpmPublish() {
 // Main publish function
 export async function publishPackage() {
   try {
-    console.log('Starting package publication process...');
+    console.log(MESSAGE.HEADER('Starting package publication process...'));
 
     // Get local project data
     const projectData = getLocalProjectData();
     const { name, version, author } = projectData;
 
     if (!name || !version) {
-      console.error('Error: Package name or version not found in package.json');
+      console.error(MESSAGE.ERROR('Error: Package name or version not found in package.json'));
       process.exit(1);
     }
 
-    console.log(`Publishing package: ${name}@${version}`);
+    console.log(MESSAGE.INFO(`Publishing package: ${MESSAGE.HIGHLIGHT(name)}@${MESSAGE.HIGHLIGHT(version)}`));
 
     // Check if package already exists on npm
     const npmCheck = await checkNpmRegistry(name);
 
     if (npmCheck.exists && npmCheck.data?.versions?.[version]) {
-      console.error(`Error: Version ${version} already exists on npm. Please update your version number.`);
+      console.error(MESSAGE.ERROR(`Error: Version ${version} already exists on npm. Please update your version number.`));
       process.exit(1);
     }
 
@@ -197,7 +199,7 @@ export async function publishPackage() {
       }
     });
 
-    console.log(`\n🎉 Successfully published ${name}@${version} to npm!`);
+    console.log(`\n${MESSAGE.SUCCESS(`🎉 Successfully published ${name}@${version} to npm!`)}`);
   } catch (error) {
     // Send telemetry event for failed publish
     await sendTelemetryEvent({
@@ -209,7 +211,7 @@ export async function publishPackage() {
       }
     });
 
-    console.error('Failed to publish package:', error);
+    console.error(MESSAGE.ERROR('Failed to publish package:'), error);
     process.exit(1);
   }
 }

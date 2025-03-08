@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { createPackage } from "../utils/createPackage.js";
 import { askForTelemetryConsent, sendTelemetryEvent } from "../utils/telemetry.js";
+import { MESSAGE } from "../utils/colors.js";
 
 const initCommand = new Command("init");
 
@@ -23,7 +24,7 @@ initCommand
         }
       });
 
-      console.log(`\nInitialized your new npm package: ${String(packageName)}\n\nHappy packshipping! 📦🛻💨\n`);
+      console.log(`\n${MESSAGE.SUCCESS(`Initialized your new npm package: ${String(packageName)}`)}\n\n${MESSAGE.HIGHLIGHT('Happy packshipping! 📦🛻💨')}\n`);
     } catch (error) {
       // Send telemetry event for failed initialization
       await sendTelemetryEvent({
@@ -35,7 +36,7 @@ initCommand
         }
       });
 
-      console.error("\n\x1b[31m%s\x1b[0m", "An error occurred during the process:", error);
+      console.error(`\n${MESSAGE.ERROR('An error occurred during the process:')} ${error instanceof Error ? error.message : String(error)}`);
       process.exit(1);
     }
   });
