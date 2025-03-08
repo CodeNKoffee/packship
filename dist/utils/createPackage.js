@@ -123,7 +123,8 @@ export async function createPackage() {
             name: String(authorName),
             email: String(authorEmail)
         },
-        license: String(licenseType)
+        license: String(licenseType),
+        _packshipInitialized: true
     };
     // Dynamically adjust package.json fields based on user choices
     if (typeof projectType === "string" && projectType.startsWith("react-")) {
