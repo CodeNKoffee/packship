@@ -144,6 +144,22 @@ Then:
 packship publish
 ```
 
+## 4. Reporting Issues
+
+You can report issues directly from the terminal using the report command:
+
+```bash
+packship report
+```
+
+This will guide you through a series of prompts to collect information about the issue. Currently, the automatic submission from the terminal is in development, so the command will show you steps for the manual submission process.
+
+To enable direct submission from the terminal (when available), you'll need to set a GitHub token as an environment variable:
+
+```bash
+export GITHUB_TOKEN=your_github_token
+```
+
 ## Telemetry
 
 PackShip collects anonymous usage data to help improve the tool. This data includes command usage and error rates, but never includes personal information or code. You can opt out at any time by running:
@@ -163,6 +179,8 @@ To re-enable telemetry:
 ```bash
 packship telemetry enable
 ```
+
+The telemetry system only tracks essential commands like `packship init` and `packship publish` to conserve tracking resources.
 
 ## Contributing
 
