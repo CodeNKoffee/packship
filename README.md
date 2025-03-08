@@ -154,17 +154,18 @@ If you encounter any issues with the Packship tool itself, you can report them d
 packship report
 ```
 
-This command is specifically for reporting issues with the Packship CLI tool, not for issues with your npm package. It will guide you through a series of prompts to collect information about the issue with Packship.
+This command is specifically for reporting issues with the Packship CLI tool, not for issues with your npm package. When you run this command, you'll be given two options:
 
-If you don't have a GitHub token set up, the command will offer you the option to enter one directly in the terminal and save it for future use.
+1. **Automatic Submission** - Submit the issue directly to GitHub from the terminal (requires a GitHub token)
+2. **Manual Submission** - Get formatted issue content to copy and paste into GitHub's issue form
 
-You can also set a GitHub token as an environment variable beforehand:
+If you choose automatic submission and don't have a GitHub token set up, you'll be prompted to enter one. You can also set a GitHub token as an environment variable beforehand:
 
 ```bash
 export GITHUB_TOKEN=your_github_token
 ```
 
-If you choose not to provide a token, the command will show you steps for manual submission with pre-formatted content.
+The tool will guide you through collecting all necessary information about the issue, including optional system information to help with troubleshooting.
 
 ## Telemetry
 

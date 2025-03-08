@@ -19,6 +19,18 @@ const ISSUE_CATEGORIES = [
   { value: 'other', label: 'Other Packship-related Issue' }
 ];
 
+// Submission methods
+const SUBMISSION_METHODS = [
+  {
+    value: 'automatic',
+    label: 'Automatic Submission (requires GitHub token)'
+  },
+  {
+    value: 'manual',
+    label: 'Manual Submission (copy & paste to GitHub)'
+  }
+];
+
 /**
  * Prompt user to enter their GitHub token and save it to .env file
  */
@@ -26,15 +38,6 @@ async function promptForGitHubToken(): Promise<string | null> {
   console.log(MESSAGE.INFO('To submit issues directly from the CLI, you need a GitHub Personal Access Token.'));
   console.log(MESSAGE.MUTED('You can create one at: ') + MESSAGE.LINK('https://github.com/settings/tokens'));
   console.log(MESSAGE.MUTED('The token needs "repo" scope to create issues.'));
-
-  const wantToEnterToken = await confirm({
-    message: 'Would you like to enter your GitHub token now?',
-    initialValue: true
-  });
-
-  if (isCancel(wantToEnterToken) || !wantToEnterToken) {
-    return null;
-  }
 
   const token = await text({
     message: 'Enter your GitHub token:',
@@ -101,12 +104,40 @@ async function promptForGitHubToken(): Promise<string | null> {
 }
 
 /**
+ * Display manual submission instructions with formatted issue content
+ */
+function showManualSubmissionInstructions(category: string, title: string, body: string): void {
+  console.log(`\nYou can submit your issue manually at:`);
+  console.log(MESSAGE.LINK('https://github.com/CodeNKoffee/packship/issues/new'));
+
+  // Format the issue for manual submission
+  const divider = `${COLORS.CYAN}--- Copy the content below for manual submission ---${COLORS.RESET}`;
+  console.log(`\n${divider}`);
+  console.log(MESSAGE.HIGHLIGHT(`Title: [${String(category)}] ${String(title)}`));
+  console.log(`\n${MESSAGE.HIGHLIGHT('Body:')}`);
+  console.log(body);
+  console.log(`${COLORS.CYAN}--- End of issue content ---${COLORS.RESET}\n`);
+}
+
+/**
  * Submit an issue to GitHub directly from the CLI
  */
 export async function submitIssue(): Promise<void> {
   console.log(`\n${MESSAGE.HEADER('📝 Report an Issue with Packship')}`);
   console.log(MESSAGE.HIGHLIGHT('This will help us improve the Packship tool by submitting an issue to our GitHub repository.'));
   console.log(MESSAGE.MUTED('No personal information will be collected other than what you provide.'));
+
+  // Choose submission method
+  const submissionMethod = await select({
+    message: 'How would you like to submit your issue?',
+    options: SUBMISSION_METHODS,
+    initialValue: 'automatic'
+  });
+
+  if (isCancel(submissionMethod)) {
+    console.log(MESSAGE.WARNING('Issue reporting cancelled.'));
+    return;
+  }
 
   // Select issue category
   const category = await select({
@@ -167,9 +198,17 @@ export async function submitIssue(): Promise<void> {
     body += systemInfo;
   }
 
+  // If manual submission was selected, show instructions and exit
+  if (submissionMethod === 'manual') {
+    showManualSubmissionInstructions(String(category), String(title), body);
+    return;
+  }
+
+  // For automatic submission, proceed with GitHub API
+
   // Confirm submission
   const confirmSubmission = await confirm({
-    message: 'Ready to submit your issue?',
+    message: 'Ready to submit your issue automatically to GitHub?',
     initialValue: true
   });
 
@@ -195,18 +234,8 @@ export async function submitIssue(): Promise<void> {
 
     // If still no token (user declined to enter one), show manual submission instructions
     if (!githubToken) {
-      console.log(`\nYou can submit your issue manually at:`);
-      console.log(MESSAGE.LINK('https://github.com/CodeNKoffee/packship/issues/new'));
-
-      // Format the issue for manual submission
-      const divider = `${COLORS.CYAN}--- Copy the content below for manual submission ---${COLORS.RESET}`;
-      console.log(`\n${divider}`);
-      console.log(MESSAGE.HIGHLIGHT(`Title: [${String(category)}] ${String(title)}`));
-      console.log(`\n${MESSAGE.HIGHLIGHT('Body:')}`);
-      console.log(body);
-      console.log(`${COLORS.CYAN}--- End of issue content ---${COLORS.RESET}\n`);
-
-      // No telemetry tracking for manual submission
+      console.log(MESSAGE.WARNING('Cannot proceed with automatic submission without a GitHub token.'));
+      showManualSubmissionInstructions(String(category), String(title), body);
       return;
     }
 
@@ -243,12 +272,7 @@ export async function submitIssue(): Promise<void> {
 
     // Show manual submission as a fallback
     console.log(`\n${MESSAGE.INFO('You can still submit your issue manually:')}`);
-    const divider = `${COLORS.CYAN}--- Copy the content below for manual submission ---${COLORS.RESET}`;
-    console.log(`\n${divider}`);
-    console.log(MESSAGE.HIGHLIGHT(`Title: [${String(category)}] ${String(title)}`));
-    console.log(`\n${MESSAGE.HIGHLIGHT('Body:')}`);
-    console.log(body);
-    console.log(`${COLORS.CYAN}--- End of issue content ---${COLORS.RESET}\n`);
+    showManualSubmissionInstructions(String(category), String(title), body);
 
     // No telemetry tracking for failed issue creation
   }
