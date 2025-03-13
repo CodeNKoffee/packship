@@ -216,6 +216,7 @@ export async function createPackage() {
     // Define files to generate based on user choices
     const files = [
         { name: "package.json", template: "package.json.hbs", data: { name, description } },
+        { name: ".packshiprc", template: "packshiprc.hbs", data: { initialized: true, version: "0.1.0" } },
         ...(includeReadme ? [{ name: "README.md", template: "README.md.hbs", data: { name, description, licenseType } }] : []),
         { name: ".gitignore", template: ".gitignore.hbs", data: {} },
         ...(useNpmignore ? [{ name: ".npmignore", template: ".npmignore.hbs", data: {} }] : []),
