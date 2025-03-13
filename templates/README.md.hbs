@@ -58,3 +58,29 @@ Contributions are welcome! Please open an issue or submit a pull request to cont
 ## License
 
 This project is licensed under the {{licenseType}} license.
+
+## Packship Integration
+
+This package was initialized with [Packship](https://github.com/CodeNKoffee/packship), a tool to help ship npm packages faster.
+
+### Custom Icons
+
+This package includes custom icons for the `.packshiprc` configuration file. To use them in VS Code:
+
+#### Option 1: Use with Popular Icon Themes
+
+1. Install one of these popular icon themes:
+   - [Material Icon Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme)
+   - [VSCode Icons](https://marketplace.visualstudio.com/items?itemName=vscode-icons-team.vscode-icons)
+
+2. Add a custom file association in your VS Code settings:
+   ```json
+   "workbench.iconTheme": "material-icon-theme", // or your preferred theme
+   "material-icon-theme.files.associations": {
+     ".packshiprc": "assets/icons/packshiprc.svg"
+   }
+   ```
+
+#### Option 2: Manual Setup
+
+The Packship icons are included in the `assets/icons` directory of this package. You can use them to create your own custom icon associations.

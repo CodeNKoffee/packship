@@ -249,6 +249,10 @@ export async function createPackage() {
   const files = [
     { name: "package.json", template: "package.json.hbs", data: { name, description } },
     { name: ".packshiprc", template: "packshiprc.hbs", data: { initialized: true, version: "0.1.0" } },
+    { name: "assets/icons/packshiprc.svg", template: "assets/icons/packshiprc-32.svg", data: {} },
+    { name: "assets/icons/packshiprc-32.svg", template: "assets/icons/packshiprc-32.svg", data: {} },
+    { name: "assets/icons/README.md", template: "assets/icons/README.md.hbs", data: {} },
+    { name: "assets/icons/vscode-settings-example.json", template: "assets/icons/vscode-settings-example.json.hbs", data: { name } },
     ...(includeReadme ? [{ name: "README.md", template: "README.md.hbs", data: { name, description, licenseType } }] : []),
     { name: ".gitignore", template: ".gitignore.hbs", data: {} },
     ...(useNpmignore ? [{ name: ".npmignore", template: ".npmignore.hbs", data: {} }] : []),

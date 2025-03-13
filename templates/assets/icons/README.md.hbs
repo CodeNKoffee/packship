@@ -1,0 +1,52 @@
+# Packship Icons
+
+This directory contains icons for the Packship tool and its configuration files.
+
+## Icons
+
+- `packshiprc.svg` - Icon for `.packshiprc` files
+- `packshiprc-32.svg` - Larger version of the icon
+
+## How to Use These Icons in VS Code
+
+We've included a sample VS Code settings file (`vscode-settings-example.json`) that you can use as a reference.
+
+### Option 1: Use with Material Icon Theme
+
+1. Install the [Material Icon Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme)
+2. Add this to your VS Code settings.json:
+
+```json
+"material-icon-theme.files.associations": {
+  ".packshiprc": "path/to/your/project/assets/icons/packshiprc.svg"
+}
+```
+
+### Option 2: Use with VSCode Icons
+
+1. Install the [VSCode Icons](https://marketplace.visualstudio.com/items?itemName=vscode-icons-team.vscode-icons)
+2. Add this to your VS Code settings.json:
+
+```json
+"vsicons.associations.files": [
+  { "icon": "path/to/your/project/assets/icons/packshiprc.svg", "extensions": [".packshiprc"], "format": "svg" }
+]
+```
+
+## Quick Setup
+
+For a quick setup, you can:
+
+1. Open VS Code settings (JSON format)
+2. Copy the contents of `vscode-settings-example.json` 
+3. Replace `path/to/your/project` with the actual path to your project
+4. Paste into your settings.json file
+
+## Contributing to Icon Themes
+
+We're working on getting `.packshiprc` support added to popular icon themes. If you'd like to help, please consider contributing to:
+
+- [Material Icon Theme](https://github.com/PKief/vscode-material-icon-theme)
+- [VSCode Icons](https://github.com/vscode-icons/vscode-icons)
+
+You can use the icons in this directory as a reference for your contributions. 
