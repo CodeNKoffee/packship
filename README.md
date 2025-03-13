@@ -176,25 +176,22 @@ The tool will guide you through collecting all necessary information about the i
 
 ## Telemetry
 
-PackShip collects anonymous usage data to help improve the tool. This data includes command usage and error rates, but never includes personal information or code. You can opt out at any time by running:
+PackShip collects anonymous usage data to help improve the tool. This data includes command usage (such as how many times `init` and `publish` commands are run) and error rates, but never includes personal information or code.
+
+You can manage telemetry settings with the following commands:
 
 ```bash
+# Check current telemetry status
+packship telemetry status
+
+# Enable telemetry
+packship telemetry enable
+
+# Disable telemetry
 packship telemetry disable
 ```
 
-To check the current telemetry status:
-
-```bash
-packship telemetry status
-```
-
-To re-enable telemetry:
-
-```bash
-packship telemetry enable
-```
-
-The telemetry system only tracks essential commands like `packship init` and `packship publish` to conserve tracking resources.
+Telemetry is opt-in and can be disabled at any time.
 
 ## Contributing
 
