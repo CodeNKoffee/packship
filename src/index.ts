@@ -9,7 +9,6 @@ import versionCommand, { getVersion } from "./commands/version.js";
 import publishCommand from "./commands/publish.js";
 import telemetryCommand from "./commands/telemetry.js";
 import reportCommand from "./commands/report.js";
-import markCommand from "./commands/mark.js";
 
 const program = new Command();
 
@@ -25,7 +24,6 @@ program.addCommand(versionCommand);
 program.addCommand(publishCommand);
 program.addCommand(telemetryCommand);
 program.addCommand(reportCommand);
-program.addCommand(markCommand);
 
 // Parse the command-line arguments
 program.parse(process.argv);
