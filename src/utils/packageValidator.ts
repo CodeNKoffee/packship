@@ -13,11 +13,15 @@ export function validatePackshipPackage(): {
 } {
   try {
     const packageJsonPath = path.join(process.cwd(), 'package.json');
+    const packshipRcPath = path.join(process.cwd(), '.packshiprc');
 
     // Check if package.json exists
     if (!fs.existsSync(packageJsonPath)) {
+      // Even if package.json doesn't exist, check for .packshiprc
+      const hasPackshipRc = fs.existsSync(packshipRcPath);
+
       return {
-        isPackshipPackage: false,
+        isPackshipPackage: hasPackshipRc,
         packageData: null,
         packageJsonExists: false
       };
@@ -26,10 +30,14 @@ export function validatePackshipPackage(): {
     // Read package.json
     const packageData = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 
-    // Check for Packship signature
-    // We'll look for a custom field that Packship adds during initialization
-    // If this field doesn't exist yet, we'll need to modify the createPackage function to add it
-    const isPackshipPackage = packageData._packshipInitialized === true;
+    // Check for Packship signature in package.json
+    const hasPackshipFlag = packageData._packshipInitialized === true;
+
+    // Also check for .packshiprc file
+    const hasPackshipRc = fs.existsSync(packshipRcPath);
+
+    // Package is considered a Packship package if either condition is true
+    const isPackshipPackage = hasPackshipFlag || hasPackshipRc;
 
     return {
       isPackshipPackage,
