@@ -1,4 +1,12 @@
-# Packship Installation Guide
+# PackShip
+
+[![Website](https://img.shields.io/badge/Website-packship.dev-blue)](https://packship.dev)
+[![Documentation](https://img.shields.io/badge/Docs-packship.dev/docs-green)](https://packship.dev/docs)
+[![Discord](https://img.shields.io/badge/Discord-PackShip%20Connect-7289DA)](https://discord.gg/5REXGVyRgV)
+[![Twitter](https://img.shields.io/badge/Twitter-@h4temsoliman-1DA1F2)](https://x.com/h4temsoliman)
+[![Medium](https://img.shields.io/badge/Medium-Read%20Our%20Story-black)](https://medium.com/@hatemthedev/packship-v2-the-decision-that-changed-everything-55a12eebcd21)
+[![Contributing](https://img.shields.io/badge/Contributing-Guidelines-2ea44f)](https://github.com/CodeNKoffee/packship/blob/master/CONTRIBUTING.md)
+[![Sponsor](https://img.shields.io/badge/Sponsor-PackShip-red)](https://www.packship.dev/sponsor-packship)
 
 **Packship** is a CLI tool designed to simplify the process of initializing new npm packages. It automates the creation of package directories, configuration files, and more, helping you set up packages faster and with less hassle.
 
