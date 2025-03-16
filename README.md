@@ -186,7 +186,7 @@ The tool will guide you through collecting all necessary information about the i
 
 PackShip collects anonymous usage data to help improve the tool. This data includes command usage (such as how many times `init` and `publish` commands are run) and error rates, but never includes personal information or code.
 
-You can manage telemetry settings with the following commands:
+You can manage telemetry settings with the following PackShip commands:
 
 ```bash
 # Check current telemetry status
